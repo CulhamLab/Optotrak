@@ -6,6 +6,7 @@ fig = hgload([pwd filesep 'GUI' filesep 'opto_step1_collectTxts' '.fig']);
 
 %% GUI - Global vars that need to transfer to GUI
 global globals
+globals = struct;
 
 %% GUI - Set text
 name = 'Script 1: Collect Data From Txt Files';
