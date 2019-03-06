@@ -1,48 +1,38 @@
-function Step2_Parse
+function Kaitlin_Analysis_Step1_Parse
 
 % These variables can be changed to match the flags in the EDF file sent by
 % project manager.
 TRIAL_SIZE = 6000; % set the length of the trial data collector
-TRIAL_START = 'Start Trial';  % trial start flag
-TRIAL_END = 'End Trial'; % trial end flag
-STIMULUS = 'Stimulus'; % stimulus presented
-TRIAL_ID = 'Condition'; % which condition is presented
+TRIAL_START = 'StartTrial';  % trial start flag
+TRIAL_END = 'EndTrial'; % trial end flag
+IMAGE_PRESENT = 'Stimulus:'; % stimulus presented
 
-fol_out_step2 = ['.' filesep 'Step2_Parse' filesep];
-if ~exist(fol_out_step2,'dir')
-    mkdir(fol_out_step2)
+fol_out_step1 = ['.' filesep 'Step1_Parse' filesep];
+if ~exist(fol_out_step1,'dir')
+    mkdir(fol_out_step1)
 end
 
-% select which files are going to be used
-[file,path] = uigetfile('*.asc', 'MultiSelect', 'on');
-while isempty (file)
-    disp ('No files selected')
-    [file,path] = uigetfile('*.mat', 'MultiSelect', 'on');
-end
+fol_asc = ['.' filesep 'EDFs' filesep];
 
-% convert single file selection into a cell array
-if ~iscell(file)
-    file = {file};
-end
+list_asc = dir([fol_asc '*.asc']);
 
 try
 
 tab = sprintf('\t');
-list_length = length(file);
+list_length = length(list_asc);
     
 for fid_asc = 1:list_length
-    clearvars -except file path tab fid_asc fol_out_step2 list_length STIMULUS TRIAL_END TRIAL_START TRIAL_SIZE TRIAL_ID
+    clearvars -except fol_asc list_asc tab fid_asc fol_out_step1 list_length TRIAL_ID IMAGE_PRESENT TRIAL_END TRIAL_START TRIAL_SIZE
     
-    %read in the current file
-    fn = file{fid_asc};
+    fn = list_asc(fid_asc).name;
     fn_part = fn(1:find(fn=='.',1,'last')-1);
     
-    fid = fopen([path,fn],'r');
+    fid = fopen([fol_asc fn],'r');
     
     started = false;
     trial = 0;
     
-   while 1
+    while 1
         line = fgetl(fid);
         if isnumeric(line)
             break
@@ -57,8 +47,9 @@ for fid_asc = 1:list_length
 
             ind_trial_start = strfind(line,TRIAL_START);
             ind_trial_end = strfind(line,TRIAL_END);
-            ind_ip = strfind(line,STIMULUS); % ip = image present
+            ind_ip = strfind(line,IMAGE_PRESENT); % ip = image present
             ind_trial_id = strfind(line,TRIAL_ID);
+            if ~started
                 
                 % get trial id (information is only available before trial
                 % starts)
@@ -66,27 +57,29 @@ for fid_asc = 1:list_length
                     face_id = line(ind_trial_id+8:end);
                     trial_data(trial).frame_data = trial_xy{trial};
                     trial_data(trial).trial_id = face_id;
-                    trial_data(trial).start_frame = {trial_data(trial).start_frame,str2num(ind_trial_start)};
-                    trial_data(trial).end_frame = {trial_data(trial).end_frame,str2num(ind_trial_end)};
                 end
                 
                 %set up a new trial package
                 if any(ind_trial_start)
                     trial = trial + 1;
-                    trial_xy{trial} = cell(TRIAL_SIZE,6);
+                    trial_xy{trial} = nan(TRIAL_SIZE,5);
                     row = 0;
-                    stimulus = nan;
+                    pic_num = nan;
                     fix_num = nan;
                     fix_count = 0;
+                    started = true;
                 end
                 
+            else
                 if any(ind_ip)
-                    stimulus = line(ind_ip+6:end);
+                    pic_num = str2num(line(ind_ip+6:end));
                 elseif any(ind_trial_end)
+                    started = false;
                     trial_xy{trial} = trial_xy{trial}(1:row,:);
                 end
+            end
             
-        elseif ~is_msg && ~isempty(line)
+        elseif started && ~is_msg && ~isempty(line)
 
             % is start/end fixation
             if is_sfix
@@ -95,7 +88,7 @@ for fid_asc = 1:list_length
             elseif is_efix
                 fix_num = nan;
 
-            % is data
+                %is data
             elseif any(str2num(line(1)))
                 ind_dot = find(line=='.',2,'first');
                 time = str2num(line(1:find((line == ' ' | line == tab),1,'first')-1));
@@ -110,12 +103,12 @@ for fid_asc = 1:list_length
                     end
                 end
                 row = row + 1;
-                trial_xy{trial}(row,:) = {trial,time,xy(2),xy(1),fix_num,stimulus, started};
-            end
+                trial_xy{trial}(row,:) = [time,xy,pic_num,fix_num];
+            end        
         end
     end
     
-    save([fol_out_step2 fn_part '.mat'])
+    save([fol_out_step1 fn_part '.mat'])
     disp(['file created for ' fn_part])
 end
 disp Done.
