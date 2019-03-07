@@ -4,3 +4,5 @@
 opto.err
 ~*.xlsx
 ~*.docx
+*.xls
+*.png
