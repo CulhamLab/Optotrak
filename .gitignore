@@ -1,1 +1,6 @@
 *.mat
+*.dat
+*.txt
+opto.err
+~*.xlsx
+~*.docx
