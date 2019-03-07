@@ -306,6 +306,9 @@ conditions = globals.condition;
 conditions.conditionRows = conditionRows;
 
 saveFol = [pwd filesep 'Step 4 Output - Analysis and Conditions'];
+if ~exist(saveFol, 'dir')
+    mkdir(saveFol);
+end
 save([saveFol filesep fn],'data','condName','condName_xls','odat','ocalc','conditions')
 
 set(globals.FigID.textStatus,'string',['Saved ' fn '.mat'])
