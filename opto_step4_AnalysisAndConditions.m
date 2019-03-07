@@ -74,7 +74,7 @@ if ~exist([pwd filesep 'Condition Lists'])
     mkdir([pwd filesep 'Condition Lists'])
 end
 if ~exist([pwd filesep 'Step 4 Output - Analysis and Conditions'])
-    mkdir([pwd filesep 'target(target) Output - Analysis and Conditions'])
+    mkdir([pwd filesep 'Step 4 Output - Analysis and Conditions'])
 end
 
 %% Defaults
