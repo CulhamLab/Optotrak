@@ -3,8 +3,17 @@
 %The image contains the plots of each contained trial in a grid.
 function OptoPreview
 
+%% Parameters
+trial_image_size = [300 300];
+
 %% Select Step 1 File(s)
 [filenames,directory] = uigetfile('*.mat','Step 1 File(s)','MultiSelect','on');
+
+%% Handle no files
+if isnumeric(filenames)
+    fprintf('No file(s) selected. Script will abort.\n');
+    return;
+end
 
 %% Handle single file
 if ~iscell(filenames)
@@ -15,7 +24,7 @@ number_files = length(filenames);
 %% Process Each File
 for fid = 1:number_files
     %open figure to use
-    fig = figure('Position',[1 1 1000 1000]);
+    fig = figure('Position',[1 1 trial_image_size]);
     
     %disp
     fn = filenames{fid};
@@ -50,7 +59,7 @@ for fid = 1:number_files
         plot3(odat.X(:,:,trial), odat.Y(:,:,trial), odat.Z(:,:,trial));
         hold on
         for ired = 1:number_IRED
-            first_frame = find(odat.X(:,ired,trial), 1, 'first');
+            first_frame = find(~isnan(odat.X(:,ired,trial)), 1, 'first');
             if ~isempty(first_frame)
                 text(odat.X(first_frame,ired,trial), odat.Y(first_frame,ired,trial), odat.Z(first_frame,ired,trial),num2str(ired));
             end
