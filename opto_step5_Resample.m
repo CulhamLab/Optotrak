@@ -470,7 +470,7 @@ for cond = 1:length(globals.load.condName)
         end
     end
     
-    fnadd = globals.load.condName{cond};
+    fnadd = globals.load.condName_xls{cond};
     xlswrite([pwd filesep 'Step 5 Output - Resample' filesep fn '_Measures'],outputMeasures,fnadd)
     xlswrite([pwd filesep 'Step 5 Output - Resample' filesep fn '_MotionFrames'],outputMotionFrames,fnadd)
     

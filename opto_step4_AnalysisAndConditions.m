@@ -74,7 +74,7 @@ if ~exist([pwd filesep 'Condition Lists'])
     mkdir([pwd filesep 'Condition Lists'])
 end
 if ~exist([pwd filesep 'Step 4 Output - Analysis and Conditions'])
-    mkdir([pwd filesep 'target(target) Output - Analysis and Conditions'])
+    mkdir([pwd filesep 'Step 4 Output - Analysis and Conditions'])
 end
 
 %% Defaults
@@ -227,7 +227,7 @@ for cond = 1:numCond
     
     %cond name for sheet (has a max length)
     if length(condName{cond})>31 %excel can't do sheets with names >31   
-        condName_xls{cond} = sprintf('%s_%02d',condName{cond}(1:28),counter)
+        condName_xls{cond} = sprintf('%s_%02d',condName{cond}(1:28),counter);
     else
         condName_xls{cond} = condName{cond};
     end
