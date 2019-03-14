@@ -2,7 +2,7 @@
 *.dat
 *.txt
 opto.err
-~*.xlsx
-~*.docx
+~*.xls*
+~*.doc*
 *.xls
 *.png
