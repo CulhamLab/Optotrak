@@ -99,6 +99,8 @@ for t = buttons'
             globals.FigID.buttonConnectIRED = t;
         case 'buttonView2D'
             globals.FigID.buttonView2D = t;
+        case 'buttonTrialLabels'
+            globals.FigID.buttonTrialLabels = t;
     end
 end
 sliders = findall(globals.FigID.fig, 'style', 'slider');
@@ -159,6 +161,7 @@ set(globals.FigID.buttonFlag,'callback',@buttonFlag)
 set(globals.FigID.buttonMore,'callback',@buttonMore)
 set(globals.FigID.buttonConnectIRED,'callback',@buttonConnectIRED)
 set(globals.FigID.buttonView2D,'callback',@buttonView2D)
+set(globals.FigID.buttonTrialLabels,'callback',@buttonTrialLabels)
 
 set(globals.FigID.sliderOnset,'callback',@sliderChange)
 set(globals.FigID.sliderOffset,'callback',@sliderChange)
@@ -205,12 +208,18 @@ if length(fields(temp))==1 %is step3 file
     else
         globals.connectPairs = [];
     end
+    if any(strcmp(fields(temp.alldata),'trialLabels'))
+        globals.trialLabels = temp.alldata.trialLabels;
+    else
+        globals.trialLabels = [];
+    end
 else
     globals.load = temp; %step2 data file
     globals.includeTrial = ones(1,size(globals.load.odat.X,3));
     globals.priorval.onsetFrame = temp.ocalc.onset.onsetFrame;
     globals.priorval.offsetFrame = temp.ocalc.offset.offsetFrame;
     globals.connectPairs = [];
+    globals.trialLabels = [];
 end
 set(globals.FigID.status,'string',['Loaded: globals.filename'])
 
@@ -342,7 +351,12 @@ end
 set(globals.FigID.fig,'color',c)
 set(globals.FigID.textTitle,'BackgroundColor',c)
 
-set(globals.FigID.textTitle,'string',sprintf('%s\nTrial: %d',globals.name,trial))
+if isempty(globals.trialLabels)
+    trial_label = '';
+else
+    trial_label = sprintf(' (%s)', globals.trialLabels{trial});
+end
+set(globals.FigID.textTitle,'string',sprintf('%s\nTrial: %d%s',globals.name,trial,trial_label))
 
 %IREDs
 %can enter ireds as "1 2 3" or "[1 2 3]" or "1,2,3" or "1, 2, 3" or "1:3" or [1:3 5 11] or even "1:3 5 11" ...
@@ -924,6 +938,36 @@ switch position
     otherwise
         %no change
 end
+end
+
+function buttonTrialLabels(fig, evt)
+global globals
+%select trial condition excel file
+[filename,directory] = uigetfile('*.xls*','Select file with trial condition labels');
+if isnumeric(filename) %no file selected
+    %reset labels
+    globals.trialLabels = [];
+else %file selected
+    %load
+    [~,~,xls] = xlsread([directory filename]);
+    
+    %remove header
+    xls = xls(2:end,:);
+
+    %check if number of trials match + set trial labels
+    number_trials_in_file = size(xls, 1);
+    if globals.params.numTrial == number_trials_in_file
+        globals.trialLabels = cellfun(@(x,y) [x ' ' y], xls(:,2), xls(:,3), 'UniformOutput', false);
+    else
+        globals.trialLabels = [];
+        redraw
+        errordlg(sprintf('Number of trials in condition file (%d) does not match loaded data (%d)!', number_trials_in_file, globals.params.numTrial));
+        return
+    end
+end
+
+%redraw
+redraw
 end
 
 function buttonConnectIRED(fig, evt)
