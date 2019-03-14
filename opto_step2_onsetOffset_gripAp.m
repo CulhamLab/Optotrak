@@ -204,22 +204,28 @@ global globals
 %            'Y-Velocity' 'Z-Velocity''Grip Aperture 1' 'Grip Aperture 1 Velocity' ...
 %            'Grip Aperture 2' 'Grip Aperture 2 Velocity' 'Grip Aperture 3'
 %            'Grip Aperture 3 Velocity' })
-optsCanBeAbs = opto_functions('measure_getIndAbsAllow');
+% % % % optsCanBeAbs = opto_functions('measure_getIndAbsAllow');
+% % % % for n = 1:2
+% % % %     if length(find(get(globals.onset.measure(n),'value') == optsCanBeAbs))
+% % % %         set(globals.onset.abs(n),'visible','on');
+% % % %     else
+% % % %         set(globals.onset.abs(n),'value',0);
+% % % %         set(globals.onset.abs(n),'visible','off');
+% % % %     end
+% % % % end
+% % % % for n = 1:2
+% % % %     if length(find(get(globals.offset.measure(n),'value') == optsCanBeAbs))
+% % % %         set(globals.offset.abs(n),'visible','on');
+% % % %     else
+% % % %         set(globals.offset.abs(n),'value',0);
+% % % %         set(globals.offset.abs(n),'visible','off');
+% % % %     end
+% % % % end
+
+%always allow
 for n = 1:2
-    if length(find(get(globals.onset.measure(n),'value') == optsCanBeAbs))
-        set(globals.onset.abs(n),'visible','on');
-    else
-        set(globals.onset.abs(n),'value',0);
-        set(globals.onset.abs(n),'visible','off');
-    end
-end
-for n = 1:2
-    if length(find(get(globals.offset.measure(n),'value') == optsCanBeAbs))
-        set(globals.offset.abs(n),'visible','on');
-    else
-        set(globals.offset.abs(n),'value',0);
-        set(globals.offset.abs(n),'visible','off');
-    end
+    set(globals.onset.abs(n),'visible','on');
+    set(globals.offset.abs(n),'visible','on');
 end
 
 end
