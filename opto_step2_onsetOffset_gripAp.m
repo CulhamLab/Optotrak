@@ -235,7 +235,7 @@ try
 global globals
 params = whatsOnTheBoard;
 curClock = clock;
-filename = sprintf('%d-%d-%d_%d%d.mat',curClock(1),curClock(2),curClock(3),curClock(4),curClock(5));
+filename = sprintf('%d-%d-%d_%d-%d.mat',curClock(1),curClock(2),curClock(3),curClock(4),curClock(5));
 uisave('params',[pwd filesep 'Saved Parameters' filesep filename])
 set(globals.processing,'String','Parameters Saved.')
 catch err
