@@ -957,7 +957,7 @@ else %file selected
     %check if number of trials match + set trial labels
     number_trials_in_file = size(xls, 1);
     if globals.params.numTrial == number_trials_in_file
-        globals.trialLabels = cellfun(@(x,y) [x ' ' y], xls(:,2), xls(:,3), 'UniformOutput', false);
+        globals.trialLabels = arrayfun(@(x) [xls{x,2} sprintf(' %s', xls{x,3:end})], 1:number_trials_in_file, 'UniformOutput', false);
     else
         globals.trialLabels = [];
         redraw
