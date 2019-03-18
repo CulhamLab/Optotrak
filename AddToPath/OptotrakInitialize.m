@@ -12,7 +12,7 @@
 %
 %  Common override parameters (optional):
 %  DEBUG          (defaults to false. if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs)
-%  PLAY_SOUNDS    (defaults to true. when data cannot be found or contains blockage, beeps will be played. All other activity will be haulted while beeps play)
+%  PLAY_SOUNDS    (defaults to true. when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play)
 %  TIMEOUT_MSEC   (defaults to 2000. time after data should have been available to stop looking and flag as an error)
 %
 %  Any constant in the opto struct can be overriden by passing a matching field in the parameters structure
@@ -41,10 +41,10 @@ opto = struct;
 
 %% Set Constants
 %debug
-opto.DEBUG = false;
+opto.DEBUG = false; %if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs
 
 %sound
-opto.PLAY_SOUNDS = true;
+opto.PLAY_SOUNDS = true; %when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play
 opto.SOUND.LATENCY = .050;
 opto.SOUND.CHANNELS = 2;
 opto.SOUND.PLAY_FREQUENCY = 44100;
@@ -56,13 +56,16 @@ opto.KEYS.CONTINUE.NAME = 'SPACE';
 opto.KEYS.TRIGGER.NAME = 'T';
 
 %timing
-opto.TIMEOUT_MSEC = 2000;
+opto.TIMING.TIMEOUT_MSEC = 2000; %time after data should have been available to stop looking and flag as an error
+opto.TIMING.BUFFER_FILE_READ_MSEC = 500; %time after file is seen before allowing read (to ensure file write is complete)
+opto.TIMING.BUFFER_TRIGGER_MSEC = 500; %time after prior trial completes before alowing next trigger
+opto.TIMING.MINIMUM_BETWEEN_HIGH_LOW_MSEC = 10; %minimum time between setting opto pin high/low (to ensure that signal is detected) (set 0 to disable)
 
 %dio
 opto.DIO.BOARD_NUMBER = 0;
-opto.DIO.OPTO.PIN = 3;
-opto.DIO.OPTO.HIGH = 1;
-opto.DIO.OPTO.LOW = 0;
+opto.DIO.PIN = 3;
+opto.DIO.HIGH = 1;
+opto.DIO.LOW = 0;
 
 %% Handle Inputs
 if ~exist('parameters', 'var') || ~isstruct(parameters)
@@ -131,6 +134,18 @@ for f = otcollect_fields
     end
 end
 
+%% Initialize
+opto.time_start = GetSecs;
+
+opto.warnings = cell(0);
+
+opto.trigger.time_allow_trigger_start = 0;
+opto.trigger.time_start = 0;
+opto.trigger.time_allow_trigger_stop = 0;
+opto.trigger.time_stop = 0;
+opto.trigger.time_expected_recording_end = 0;
+opto.trigger.time_timeout = opto.trigger.time_expected_recording_end + (opto.TIMING.TIMEOUT_MSEC / 1000);
+
 %% Check that PsychToolbox is installed and working
 try
     AssertOpenGL();
@@ -177,13 +192,10 @@ warning(sprintf('\n1. Check that the above parameters match what you entered in 
 % % %     end
 % % % end
 
-%% Check what the next .dat filename should be
-
-
 %% Setup dio, which will trigger a recording
 fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device...')
 
-%open dio
+%open dio (triggers first recording if OTCollect is started)
 if ~opto.DEBUG
     opto.dio = digitalio('mcc', opto.DIO.BOARD_NUMBER);
 
@@ -200,13 +212,64 @@ if ~opto.DEBUG
     addline(opto.dio,0:7,0,'In');     % First Port A
 
     %set output to zeros for line 1 to 40
-    putvalue(opto.dio.line(1:40), zeros(1,40));
+    putvalue(opto.dio.line(1:40), zeros(1,40)); 
 end
+%send trigger now even though it shouldn't be needed (this is done to set timing data)
+OptotrakTriggerFull;
+global opto
 fprintf('connection established.\n')
 
 %% Wait for data to become available
-fprintf('\n')
-fprintf('\nWaiting for trial data to become available from the recording triggered by setup...');
+fprintf('\nThe expected filename is %s\n', opto.next_recording.filename);
+fprintf('If OTCollect was not started on time, press %s to send a trigger.\n', opto.KEYS.TRIGGER.NAME);
+fprintf('If a trial is recorded but this script does not find it, check the path and filename.\n');
+fprintf('You may press %s to stop the script if needed.\n', opto.KEYS.STOP.NAME);
+
+if opto.next_recording.trial_number ~= 1
+    warning('The expected next trial (%s) is not trial 1. This is okay so long as it matches OTCollect''s trial number. This may occur if initialization is repeated without restarting OTCollect.\n', opto.next_recording.filename)
+end
+
+fprintf('\nWaiting for %s to become available...\n', opto.next_recording.filename);
+
+filepath = [opto.DIRECTORY_DATA opto.next_recording.filename];
+recording_should_be_done = false;
+timed_out = false;
+while 1
+    t = GetSecs;
+    
+    %look for file
+    if exist(filepath, 'file')
+        break;
+    end
+    
+    %check if file should be available by now
+    if ~recording_should_be_done && (t > opto.trigger.time_expected_recording_end)
+        recording_should_be_done = true;
+        fprintf('Recording should be completed by now\n')
+    end
+    
+    %check if past timeout
+    if ~timed_out && (t > opto.trigger.time_timeout)
+        timed_out = true;
+        warning('If this were a trial, it would have timed out waiting for data file to be found!')
+    end
+    
+    %handle keys
+    [~,~,keys] = KbCheck(-1);
+    if keys(opto.KEYS.STOP.VALUE)
+        error('Stop key pressed.')
+    elseif keys(opto.KEYS.TRIGGER.VALUE)
+        fprintf('Sending another trigger (may be delayed if prior trigger was recent)...\n');
+        OptotrakTriggerFull;
+        global opto
+        filepath = [opto.DIRECTORY_DATA opto.next_recording.filename];
+        fprintf('Trigger sent! Waiting for %s\n', opto.next_recording.filename);
+        recording_should_be_done = false;
+        timed_out = false;
+        WaitSecs(1);
+    end
+end
+fprintf('\n%s found!', opto.next_recording.filename);
 
 %% Read data file to check inputs
 
