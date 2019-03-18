@@ -136,21 +136,24 @@ end
 
 %% Initialize
 opto.time_start = GetSecs;
-
+opto.initialized = false; %initializing not yet complete
 opto.warnings = cell(0);
 
-opto.trigger.time_allow_trigger_start = 0;
-opto.trigger.time_start = 0;
-opto.trigger.time_allow_trigger_stop = 0;
-opto.trigger.time_stop = 0;
-opto.trigger.time_expected_recording_end = 0;
-opto.trigger.time_timeout = opto.trigger.time_expected_recording_end + (opto.TIMING.TIMEOUT_MSEC / 1000);
+opto.trigger.time_allow_trigger_start = 0; %ready to prepare trigger
+
+opto.trigger.file_searched = true;
+opto.trigger.file_found = true;
+opto.trigger.file_checked = true;
+opto.trigger.file_located_filepath = [];
+
+opto.trigger.started = true; %ready to prepare trigger
+opto.trigger.stopped = true; %ready to prepare trigger
 
 %% Check that PsychToolbox is installed and working
 try
     AssertOpenGL();
 catch err
-    warning('PsychToolbox might not be installed or setup correctly!')
+    OptotrakWarning('PsychToolbox might not be installed or setup correctly!')
     rethrow(err)
 end
 
@@ -195,6 +198,12 @@ warning(sprintf('\n1. Check that the above parameters match what you entered in 
 %% Setup dio, which will trigger a recording
 fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device...')
 
+%prepare to trigger
+OptotrakPrepareTrigger;
+
+%update global to get latest filename (required to updated global on older versions of MATLAB) 
+global opto
+
 %open dio (triggers first recording if OTCollect is started)
 if ~opto.DEBUG
     opto.dio = digitalio('mcc', opto.DIO.BOARD_NUMBER);
@@ -214,66 +223,42 @@ if ~opto.DEBUG
     %set output to zeros for line 1 to 40
     putvalue(opto.dio.line(1:40), zeros(1,40)); 
 end
-%send trigger now even though it shouldn't be needed (this is done to set timing data)
+
+%send an actual trigger even though it shouldn't be needed (this is done to set timing data)
 OptotrakTriggerFull;
-global opto
+
 fprintf('connection established.\n')
 
 %% Wait for data to become available
-fprintf('\nThe expected filename is %s\n', opto.next_recording.filename);
+%display details of search
+fprintf('\nThe expected filename is %s\n', opto.trigger.filename);
 fprintf('If OTCollect was not started on time, press %s to send a trigger.\n', opto.KEYS.TRIGGER.NAME);
 fprintf('If a trial is recorded but this script does not find it, check the path and filename.\n');
 fprintf('You may press %s to stop the script if needed.\n', opto.KEYS.STOP.NAME);
 
-if opto.next_recording.trial_number ~= 1
-    warning('The expected next trial (%s) is not trial 1. This is okay so long as it matches OTCollect''s trial number. This may occur if initialization is repeated without restarting OTCollect.\n', opto.next_recording.filename)
+%if this isn't trial 1, warn the user and explain circumstances
+if opto.trigger.filename_number ~= 1
+    warning('The expected next trial (%s) is not trial 1. This is okay so long as it matches OTCollect''s trial number. This may occur if initialization is repeated without restarting OTCollect.\n', opto.trigger.filename)
 end
 
-fprintf('\nWaiting for %s to become available...\n', opto.next_recording.filename);
+%wait for file
+fprintf('\nWaiting for %s to become available...\n', opto.trigger.filename);
+OptotrakLookForData;
 
-filepath = [opto.DIRECTORY_DATA opto.next_recording.filename];
-recording_should_be_done = false;
-timed_out = false;
-while 1
-    t = GetSecs;
-    
-    %look for file
-    if exist(filepath, 'file')
-        break;
-    end
-    
-    %check if file should be available by now
-    if ~recording_should_be_done && (t > opto.trigger.time_expected_recording_end)
-        recording_should_be_done = true;
-        fprintf('Recording should be completed by now\n')
-    end
-    
-    %check if past timeout
-    if ~timed_out && (t > opto.trigger.time_timeout)
-        timed_out = true;
-        warning('If this were a trial, it would have timed out waiting for data file to be found!')
-    end
-    
-    %handle keys
-    [~,~,keys] = KbCheck(-1);
-    if keys(opto.KEYS.STOP.VALUE)
-        error('Stop key pressed.')
-    elseif keys(opto.KEYS.TRIGGER.VALUE)
-        fprintf('Sending another trigger (may be delayed if prior trigger was recent)...\n');
-        OptotrakTriggerFull;
-        global opto
-        filepath = [opto.DIRECTORY_DATA opto.next_recording.filename];
-        fprintf('Trigger sent! Waiting for %s\n', opto.next_recording.filename);
-        recording_should_be_done = false;
-        timed_out = false;
-        WaitSecs(1);
-    end
-end
-fprintf('\n%s found!', opto.next_recording.filename);
+%update global to get latest filename (required to updated global on older versions of MATLAB) 
+global opto
+
+fprintf('\n%s found!', opto.trigger.filename);
 
 %% Read data file to check inputs
 
+
 %% Open an audio player and make beeps
+
+
+%% Complete
+opto.initialized = true;
+fprintf('\nOptotrak initialization has completed successfully!\n');
 
 
 %% Functions
