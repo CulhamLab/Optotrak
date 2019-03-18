@@ -7,7 +7,7 @@
 % 1. function called after the timeout window has already elapsed
 % 2. file was not found within the timeout window
 % 3. file was found too early (before it should have been possible)
-function [found] = OptotrakLookForData
+function [found, filepath] = OptotrakLookForData
 global opto
 
 %error if trigger isn't yet stopped
@@ -109,4 +109,4 @@ else
     opto.trigger.file_located_filepath = [];
 end
 
-%found is returned
+%found and filepath are returned
