@@ -5,6 +5,12 @@
 %If prior trigger was too recent, this script **WILL WAIT** until it is
 %allowed to trigger to prevent attempting to trigger during prior
 %recording.
+%
+%The trigger is sent very early in this script (once allowed), but several
+%other actions are performed afterwards that can take a little bit of time.
+%The time at which the trigger began is returned.
+%
+%Ideally, time sensitive actions should be perform immediately prior to OptotrakTriggerStart
 function [time_started] = OptotrakTriggerStart(trial_number)
 global opto
 
