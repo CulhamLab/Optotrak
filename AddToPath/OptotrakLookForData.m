@@ -22,7 +22,7 @@ end
 
 %error if looking for file after timeout window (cannot be confident that
 %anything found is the result of a planned trigger)
-if GetSecs > opto.trigger.time_timeout
+if GetSecs > opto.trigger.time_file_search_timeout
     error('Cannot search for data after the timeout window has elapsed!')
 end
 
@@ -44,7 +44,7 @@ while 1
     end
     
     %check if past timeout
-    if ~timed_out && (t > opto.trigger.time_timeout)
+    if ~timed_out && (t > opto.trigger.time_file_search_timeout)
         if opto.initialized
             %timeout, file not found
             OptotrakWarning(sprintf('Timeout occured while searching for file: %s', filepath));
