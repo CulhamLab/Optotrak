@@ -1,3 +1,5 @@
+%OptotrakWarning(message)
+%
 %Display and record a warning message 
 function OptotrakWarning(message)
 warning(message);
