@@ -4,10 +4,10 @@
 % OptotrakPrepareTrigger (slow, call this well before the trial begins)
 % OptotrakTriggerStart (fast, sets pin high to trigger OTCollect to start
 %                       recording immediately)
-% OptotrakTriggerEnd (fast unless Start was called too recently because
-%                     OTCollect needs some time to detect the signal,
-%                     should be called before recording ends to prevent a 
-%                     potential false trigger, sets pin low)
+% OptotrakTriggerStop (fast unless Start was called too recently because
+%                      OTCollect needs some time to detect the signal,
+%                      should be called before recording ends to prevent a 
+%                      potential false trigger, sets pin low)
 %
 %Must be called before triggering a recording. This function may take
 %several seconds to complete so it should be called before a trial begins
@@ -24,11 +24,6 @@
 function OptotrakPrepareTrigger(optional_trial_number)
 global opto
 
-%if haven't checked prior data, do that now
-if ~opto.trigger.file_checked
-    OptotrakCheckData
-end
-
 %wait until allowed to start trigger
 while GetSecs < opto.trigger.time_allow_trigger_start
     [~,~,keys] = KbCheck(-1);
@@ -40,7 +35,7 @@ end
 %error if prior trigger was not started and stopped
 if ~opto.trigger.started
     error('Prior trigger was not started!');
-if ~opto.trigger.stopped
+elseif ~opto.trigger.stopped
     error('Prior trigger was not stopped!');
 end
 

@@ -4,10 +4,10 @@
 % OptotrakPrepareTrigger (slow, call this well before the trial begins)
 % OptotrakTriggerStart (fast, sets pin high to trigger OTCollect to start
 %                       recording immediately)
-% OptotrakTriggerEnd (fast unless Start was called too recently because
-%                     OTCollect needs some time to detect the signal,
-%                     should be called before recording ends to prevent a 
-%                     potential false trigger, sets pin low)
+% OptotrakTriggerStop (fast unless Start was called too recently because
+%                      OTCollect needs some time to detect the signal,
+%                      should be called before recording ends to prevent a 
+%                      potential false trigger, sets pin low)
 %
 %Must be called after OptotrakPrepareTrigger and OptotrakTriggerStart
 %
@@ -38,7 +38,9 @@ if opto.TIMING.MINIMUM_BETWEEN_HIGH_LOW_MSEC > 0
 end
 
 %stop trigger
-if ~opto.DEBUG
+if opto.DEBUG
+    OptotrakWarning('DEBUG: trigger would have stopped');
+else
     putvalue(dio.line(opto.DIO.PIN), optodio.LOW);
 end
 time_stop = GetSecs;

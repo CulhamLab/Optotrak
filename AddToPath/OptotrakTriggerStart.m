@@ -4,10 +4,10 @@
 % OptotrakPrepareTrigger (slow, call this well before the trial begins)
 % OptotrakTriggerStart (fast, sets pin high to trigger OTCollect to start
 %                       recording immediately)
-% OptotrakTriggerEnd (fast unless Start was called too recently because
-%                     OTCollect needs some time to detect the signal,
-%                     should be called before recording ends to prevent a 
-%                     potential false trigger, sets pin low)
+% OptotrakTriggerStop (fast unless Start was called too recently because
+%                      OTCollect needs some time to detect the signal,
+%                      should be called before recording ends to prevent a 
+%                      potential false trigger, sets pin low)
 %
 %Must be called after OptotrakPrepareTrigger and before OptotrakTriggerEnd
 function [time_started] = OptotrakTriggerStart
