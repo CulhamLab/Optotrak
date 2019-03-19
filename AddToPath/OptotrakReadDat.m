@@ -1,3 +1,5 @@
+%[data] = OptotrakReadDat(filepath)
+%
 %Reads a dat file directly given full filepath, processes the raw data in
 %the same way that OTDisplay would and returns the following data structure:
 % timestamp (HH:MM:SS DD/MM/YY, time at which sample was recorded - not time of read)
