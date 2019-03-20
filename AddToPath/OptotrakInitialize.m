@@ -2,6 +2,8 @@
 %
 %TODO: description
 %
+%For use with the Optotrak systems in rooms 3145 (2x Certus) and 3151 (3x 3020s)
+%
 %PARAMETERS
 %  Required parameters:
 %  NUMBER_IREDS   (must match OTCollect)
