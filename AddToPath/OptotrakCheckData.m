@@ -40,7 +40,7 @@ end
 if exist('override_search', 'var')
     check_settings = override_check;
 else
-    check_settings = opto.default_check;
+    check_settings = opto.DEFAULT_CHECK;
 end
 
 %if file was not found, data not okay

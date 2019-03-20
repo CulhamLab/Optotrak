@@ -68,9 +68,9 @@ opto.DIO.HIGH = 1;
 opto.DIO.LOW = 0;
 
 %check
-opto.default_check.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
-opto.default_check.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
-opto.default_check.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
+opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
+opto.DEFAULT_CHECK.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
+opto.DEFAULT_CHECK.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
 
 %% Handle Inputs
 if ~exist('parameters', 'var') || ~isstruct(parameters)
