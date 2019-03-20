@@ -258,6 +258,8 @@ if ~opto.DEBUG
         OptotrakWarning(err);
         error('Could not connect to Optotrak PC via dio. Most likely, this is the result of running the script on another PC without enabling DEBUG.')
     end
+else
+    opto.dio = [];
 end
 
 %send an actual trigger even though it shouldn't be needed (this is done to set timing data)
