@@ -2,6 +2,8 @@
 %
 %TODO: description
 %
+%Use in parallel with OTCollect in rooms 3145 (2x Certus) and 3151 (3x 3020s)
+%
 %PARAMETERS
 %  Required parameters:
 %  NUMBER_IREDS   (must match OTCollect)
@@ -258,6 +260,8 @@ if ~opto.DEBUG
         OptotrakWarning(err);
         error('Could not connect to Optotrak PC via dio. Most likely, this is the result of running the script on another PC without enabling DEBUG.')
     end
+else
+    opto.dio = [];
 end
 
 %send an actual trigger even though it shouldn't be needed (this is done to set timing data)
