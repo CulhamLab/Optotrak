@@ -17,6 +17,6 @@
 %If there is something time-sensitive that must immediately follow the
 %trigger start, call OptotrakTriggerStart instead and then call
 %OptotrakTriggerStop later (before recording finishes).
-function [time_started] = OptotrakTriggerFull
+function [time_started, time_stopped] = OptotrakTriggerFull
 time_started = OptotrakTriggerStart;
-OptotrakTriggerStop;
+time_stopped = OptotrakTriggerStop;

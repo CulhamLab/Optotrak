@@ -70,6 +70,12 @@ end
 
 
 function [opto] = CheckNextFile(opto)
+%debug
+if opto.NO_FILES
+    opto.trigger.filename_number = 1;
+    opto.trigger.filename = 'DEBUG';
+end
+
 %get list of all dat files
 list = dir([opto.DIRECTORY_DATA strrep(opto.FILENAME_DATA, '###', '*')]);
 

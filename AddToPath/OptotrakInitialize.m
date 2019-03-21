@@ -13,7 +13,8 @@
 %  FILENAME_DATA  (must match OTCollect not including the "_###.dat" that is automatically added)
 %
 %  Common override parameters (optional):
-%  DEBUG             (defaults to false. if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs)
+%  DEBUG             (defaults to false. if true, prevents use of hardware for testing on other PCs - still excpects data files to appear unless NO_FILES is also set true)
+%  NO_FILES          (defaults to false. if true, data files will not be searched for or checked)
 %  SOUND.PLAY_SOUNDS (defaults to true. when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play)
 %  TIMEOUT_MSEC      (defaults to 2000. time after data should have been available to stop looking and flag as an error)
 %
@@ -37,7 +38,8 @@ opto = struct;
 
 %% Set Constants
 %debug
-opto.DEBUG = false; %if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs
+opto.DEBUG = false; %if true, prevents use of hardware for testing on other PCs - still excpects data files to appear unless NO_FILES is also set true
+opto.NO_FILES = false; %if true, data files will not be searched for or checked
 
 %sound
 opto.SOUND.PLAY_SOUNDS = true; %when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play (triggered by OptotrakCheckData)
@@ -68,9 +70,9 @@ opto.DIO.HIGH = 1;
 opto.DIO.LOW = 0;
 
 %check
-opto.default_check.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
-opto.default_check.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
-opto.default_check.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
+opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
+opto.DEFAULT_CHECK.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
+opto.DEFAULT_CHECK.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
 
 %% Handle Inputs
 if ~exist('parameters', 'var') || ~isstruct(parameters)
@@ -184,7 +186,7 @@ if opto.DIRECTORY_DATA(end) ~= filesep
 end
 
 %check for dir
-if ~exist(opto.DIRECTORY_DATA, 'dir')
+if ~exist(opto.DIRECTORY_DATA, 'dir') && ~opto.NO_FILES
     error('Data directory does not exist or is inaccessible: %s\n', opto.DIRECTORY_DATA)
 end
 

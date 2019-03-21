@@ -36,11 +36,19 @@ if ~opto.trigger.file_searched
     OptotrakLookForData;
 end
 
+%debug NO_FILES
+if opto.NO_FILES
+    OptotrakWarning('NO_FILES is enabled so CheckData is returning true without looking');
+    data_passes_checks = true;
+    data = nan;
+    return
+end
+
 %create check criteria
 if exist('override_search', 'var')
     check_settings = override_check;
 else
-    check_settings = opto.default_check;
+    check_settings = opto.DEFAULT_CHECK;
 end
 
 %if file was not found, data not okay
@@ -79,8 +87,13 @@ end
 
 %play beeps if data did not pass **WILL WAIT FOR BEEP TO FINISH**
 if opto.SOUND.PLAY_SOUNDS && ~data_passes_checks
+    prior_volume = PsychPortAudio('Volume', opto.sound_handle, opto.SOUND.VOLUME);
+    
+    PsychPortAudio('FillBuffer', opto.sound_handle, opto.beep);
     PsychPortAudio('Start', opto.sound_handle);
     PsychPortAudio('Stop', opto.sound_handle, 1);
+    
+    PsychPortAudio('Volume', opto.sound_handle, prior_volume);
 end
 
 %return data (and data_passes_checks)
