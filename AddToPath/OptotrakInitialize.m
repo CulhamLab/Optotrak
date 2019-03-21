@@ -186,7 +186,7 @@ if opto.DIRECTORY_DATA(end) ~= filesep
 end
 
 %check for dir
-if ~exist(opto.DIRECTORY_DATA, 'dir')
+if ~exist(opto.DIRECTORY_DATA, 'dir') && ~opto.NO_FILES
     error('Data directory does not exist or is inaccessible: %s\n', opto.DIRECTORY_DATA)
 end
 
