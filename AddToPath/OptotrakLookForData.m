@@ -24,7 +24,7 @@ end
 if opto.NO_FILES
     OptotrakWarning('NO_FILES is enabled so LookForData is returning true without looking');
     found = true;
-    filepath = nan;
+    filepath = 'DEBUG';
     return
 end
 
