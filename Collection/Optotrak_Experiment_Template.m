@@ -1,4 +1,4 @@
-%Optotrak_Experiment_Template(participant_number, run_number, override_start_trial_number)
+%Optotrak_Experiment_Template(participant_number, override_start_trial_number)
 %
 %TODO: description
 %
