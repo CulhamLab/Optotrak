@@ -36,6 +36,14 @@ if ~opto.trigger.file_searched
     OptotrakLookForData;
 end
 
+%debug NO_FILES
+if opto.NO_FILES
+    OptotrakWarning('NO_FILES is enabled so CheckData is returning true without looking');
+    data_passes_checks = true;
+    data = nan;
+    return
+end
+
 %create check criteria
 if exist('override_search', 'var')
     check_settings = override_check;

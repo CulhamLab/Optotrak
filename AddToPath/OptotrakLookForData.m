@@ -20,6 +20,14 @@ if opto.trigger.file_searched
     error('Already searched for this file!')
 end
 
+%debug NO_FILES
+if opto.NO_FILES
+    OptotrakWarning('NO_FILES is enabled so LookForData is returning true without looking');
+    found = true;
+    filepath = nan;
+    return
+end
+
 %error if looking for file after timeout window (cannot be confident that
 %anything found is the result of a planned trigger)
 if GetSecs > opto.trigger.time_file_search_timeout

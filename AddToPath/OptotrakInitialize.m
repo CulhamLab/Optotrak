@@ -13,7 +13,8 @@
 %  FILENAME_DATA  (must match OTCollect not including the "_###.dat" that is automatically added)
 %
 %  Common override parameters (optional):
-%  DEBUG             (defaults to false. if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs)
+%  DEBUG             (defaults to false. if true, prevents use of hardware for testing on other PCs - still excpects data files to appear unless NO_FILES is also set true)
+%  NO_FILES          (defaults to false. if true, data files will not be searched for or checked)
 %  SOUND.PLAY_SOUNDS (defaults to true. when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play)
 %  TIMEOUT_MSEC      (defaults to 2000. time after data should have been available to stop looking and flag as an error)
 %
@@ -37,7 +38,8 @@ opto = struct;
 
 %% Set Constants
 %debug
-opto.DEBUG = false; %if true, prevents use of hardware and causes all functions to return immediately - for testing on other PCs
+opto.DEBUG = false; %if true, prevents use of hardware for testing on other PCs - still excpects data files to appear unless NO_FILES is also set true
+opto.NO_FILES = false; %if true, data files will not be searched for or checked
 
 %sound
 opto.SOUND.PLAY_SOUNDS = true; %when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play (triggered by OptotrakCheckData)
