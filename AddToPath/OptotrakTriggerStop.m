@@ -19,7 +19,7 @@
 %then a false trigger may be detected. In this case, the next trial
 %recording will be delayed by one sample duration + buffer to prevent
 %potential issues.
-function OptotrakTriggerStop
+function [time_stopped] = OptotrakTriggerStop
 global opto
 
 %error if trigger already stopped
@@ -51,3 +51,6 @@ if GetSecs > opto.trigger.time_expected_recording_end
     OptotrakWarning('This trigger end is very late so the next trigger will be delayed in case a false trigger was just sent.')
     opto.trigger.time_allow_trigger_start = time_stop + (opto.RECORD_MSEC / 1000) +(opto.TIMING.BUFFER_TRIGGER_MSEC / 1000);
 end
+
+%return time
+time_stopped = GetSecs;
