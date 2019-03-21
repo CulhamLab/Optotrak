@@ -84,7 +84,7 @@ list = list(~cellfun(@isempty, regexp({list.name}, strrep(opto.FILENAME_DATA, '#
 
 %if no match, expect first trial 001
 if isempty(list)
-    opto.recording.trial_number = 1;
+    opto.trigger.filename_number = 1;
 else
     %get trial numbers from matches
     ind_trial = strfind(opto.FILENAME_DATA, '###');

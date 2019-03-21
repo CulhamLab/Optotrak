@@ -41,7 +41,7 @@ end
 if opto.DEBUG
     OptotrakWarning('DEBUG: trigger would have stopped');
 else
-    putvalue(dio.line(opto.DIO.PIN), optodio.LOW);
+    putvalue(opto.dio.line(opto.DIO.PIN), opto.DIO.LOW);
 end
 time_stop = GetSecs;
 opto.trigger.stopped = true;

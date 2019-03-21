@@ -69,11 +69,6 @@ opto.DIO.PIN = 3;
 opto.DIO.HIGH = 1;
 opto.DIO.LOW = 0;
 
-%check
-opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
-opto.DEFAULT_CHECK.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
-opto.DEFAULT_CHECK.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
-
 %% Handle Inputs
 if ~exist('parameters', 'var') || ~isstruct(parameters)
     help(mfilename)
@@ -132,6 +127,11 @@ for f = otcollect_fields
         opto = setfield(opto, f, getfield(parameters, f));
     end
 end
+
+%create default check
+opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
+opto.DEFAULT_CHECK.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
+opto.DEFAULT_CHECK.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
 
 %% Initialize
 opto.time_start = GetSecs;
@@ -196,7 +196,7 @@ timestamp = sprintf('_%d-%d-%d_%d-%d_%d',c([4 5 6 3 2 1]));
 opto.FILENAME_SAVE = [opto.FILENAME_DATA timestamp '.mat'];
 
 %% Create filename format for data search
-opto.FILENAME_DATA = [opto.FILENAME_DATA '_###.dat'];
+opto.FILENAME_DATA = [opto.FILENAME_DATA '_opto_###.dat'];
 
 %% Open audio player and make/add beep
 if opto.SOUND.PLAY_SOUNDS

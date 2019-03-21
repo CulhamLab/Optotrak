@@ -37,6 +37,15 @@ end
 %filepath to look for
 filepath = [opto.DIRECTORY_DATA opto.trigger.filename];
 
+%wait for recording
+while GetSecs < opto.trigger.time_expected_recording_end
+    %handle keys
+    [~,~,keys] = KbCheck(-1);
+    if keys(opto.KEYS.STOP.VALUE)
+        error('Stop key pressed.')
+    end
+end
+
 %wait for file...
 recording_should_be_done = false;
 timed_out = false;

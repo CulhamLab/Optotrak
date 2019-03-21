@@ -45,10 +45,14 @@ if opto.NO_FILES
 end
 
 %create check criteria
-if exist('override_search', 'var')
-    check_settings = override_check;
-else
-    check_settings = opto.DEFAULT_CHECK;
+check_settings = opto.DEFAULT_CHECK;
+if exist('override_check', 'var')
+    for f = fields(override_check)'
+        f = f{1};
+        if isfield(check_settings, f)
+            check_settings = setfield(check_settings, f, getfield(override_check, f));
+        end
+    end
 end
 
 %if file was not found, data not okay
@@ -83,17 +87,20 @@ end
 if ~isnan(opto.trigger.trial)
     opto.trial(opto.trigger.trial).data = opto.trigger.data;
     opto.trial(opto.trigger.trial).data_passes_checks = data_passes_checks;
+    opto.trial(opto.trigger.trial).check_settings = check_settings;
 end
 
 %play beeps if data did not pass **WILL WAIT FOR BEEP TO FINISH**
 if opto.SOUND.PLAY_SOUNDS && ~data_passes_checks
-    prior_volume = PsychPortAudio('Volume', opto.sound_handle, opto.SOUND.VOLUME);
-    
-    PsychPortAudio('FillBuffer', opto.sound_handle, opto.beep);
-    PsychPortAudio('Start', opto.sound_handle);
-    PsychPortAudio('Stop', opto.sound_handle, 1);
-    
-    PsychPortAudio('Volume', opto.sound_handle, prior_volume);
+    try
+        prior_volume = PsychPortAudio('Volume', opto.sound_handle, opto.SOUND.VOLUME);
+
+        PsychPortAudio('FillBuffer', opto.sound_handle, opto.beep);
+        PsychPortAudio('Start', opto.sound_handle);
+        PsychPortAudio('Stop', opto.sound_handle, 1);
+
+        PsychPortAudio('Volume', opto.sound_handle, prior_volume);
+    end
 end
 
 %return data (and data_passes_checks)
