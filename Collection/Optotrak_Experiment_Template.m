@@ -1,4 +1,4 @@
-%Optotrak_Experiment_Template(participant_number, run_number, override_start_trial_number)
+%Optotrak_Experiment_Template(participant_number, override_start_trial_number)
 %
 %TODO: description
 %
@@ -97,6 +97,27 @@ if d.trial_start > d.number_trials_in_order
     error('Start trial exceeds number of trials!')
 end
 
+%% Warn + require key if any debug setting is true
+
+if p.DEBUG
+    warning('One or more debug settings is enabled! Press %s to continue or %s to exit.', p.KEYS.CONTINUE.NAME, p.KEYS.STOP.NAME)
+    WaitForKeysReleased(p);
+    while 1
+        [~,keys,~] = KbWait(-1);
+        if any(keys(p.KEYS.STOP.VALUE))
+            error('Exit key pressed.')
+        elseif any(keys(p.KEYS.CONTINUE.VALUE))
+            break;
+        end
+    end
+    WaitForKeysReleased(p);
+end
+
+%% Try...
+try
+
+%% SOUND
+
 %sound player
 InitializePsychSound(1);
 sound_handle = PsychPortAudio('Open', [], 1, [], p.SOUND.PLAY_FREQUENCY, p.SOUND.CHANNELS, [], p.SOUND.LATENCY);
@@ -115,25 +136,6 @@ if ~p.DEBUG
     PsychPortAudio('FillBuffer', sound_handle, beep_low);
     PsychPortAudio('Start', sound_handle);
     PsychPortAudio('Stop', sound_handle, 1);
-end
-
-%% Try...
-try
-
-%% Warn + require key if any debug setting is true
-
-if p.DEBUG
-    warning('One or more debug settings is enabled! Press %s to continue or %s to exit.', p.KEYS.CONTINUE.NAME, p.KEYS.STOP.NAME)
-    WaitForKeysReleased(p);
-    while 1
-        [~,keys,~] = KbWait(-1);
-        if any(keys(p.KEYS.STOP.VALUE))
-            error('Exit key pressed.')
-        elseif any(keys(p.KEYS.CONTINUE.VALUE))
-            break;
-        end
-    end
-    WaitForKeysReleased(p);
 end
 
 %% Optotrak Initialization
