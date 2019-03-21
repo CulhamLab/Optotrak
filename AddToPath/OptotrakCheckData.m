@@ -87,13 +87,15 @@ end
 
 %play beeps if data did not pass **WILL WAIT FOR BEEP TO FINISH**
 if opto.SOUND.PLAY_SOUNDS && ~data_passes_checks
-    prior_volume = PsychPortAudio('Volume', opto.sound_handle, opto.SOUND.VOLUME);
-    
-    PsychPortAudio('FillBuffer', opto.sound_handle, opto.beep);
-    PsychPortAudio('Start', opto.sound_handle);
-    PsychPortAudio('Stop', opto.sound_handle, 1);
-    
-    PsychPortAudio('Volume', opto.sound_handle, prior_volume);
+    try
+        prior_volume = PsychPortAudio('Volume', opto.sound_handle, opto.SOUND.VOLUME);
+
+        PsychPortAudio('FillBuffer', opto.sound_handle, opto.beep);
+        PsychPortAudio('Start', opto.sound_handle);
+        PsychPortAudio('Stop', opto.sound_handle, 1);
+
+        PsychPortAudio('Volume', opto.sound_handle, prior_volume);
+    end
 end
 
 %return data (and data_passes_checks)
