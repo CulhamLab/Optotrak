@@ -22,7 +22,7 @@ end
 if opto.DEBUG
     OptotrakWarning('DEBUG: trigger would have started');
 else
-    putvalue(opto.dio.line(opto.DIO.PIN), opto.dio.HIGH);
+    putvalue(opto.dio.line(opto.DIO.PIN), opto.DIO.HIGH);
 end
 time_started = GetSecs;
 opto.trigger.started = true;
