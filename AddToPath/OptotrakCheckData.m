@@ -45,10 +45,14 @@ if opto.NO_FILES
 end
 
 %create check criteria
+check_settings = opto.DEFAULT_CHECK;
 if exist('override_check', 'var')
-    check_settings = override_check;
-else
-    check_settings = opto.DEFAULT_CHECK;
+    for f = fields(override_check)'
+        f = f{1};
+        if isfield(check_settings, f)
+            check_settings = setfield(check_settings, f, getfield(override_check, f));
+        end
+    end
 end
 
 %if file was not found, data not okay
