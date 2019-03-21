@@ -280,14 +280,14 @@ while 1 %repeating trials is much more simples in a while loop than a for loop
         continue;
     end
     
+	%make a backup for trial repeat
+    trial_repeat_data = d.trial_info(trial);
+	
+	%record how long trial prep took
+    d.trial_info(trial).timing.duration_prepare_trial = GetSecs - time_start_trial_prep;
+	
     %prepare optotrak for trial
     OptotrakPrepareTrigger(trial);
-    
-    %make a backup for trial repeat
-    trial_repeat_data = d.trial_info(trial);
-    
-    %record how long trial prep took
-    d.trial_info(trial).timing.duration_prepare_trial = GetSecs - time_start_trial_prep;
     
     %prepare high beep
     PsychPortAudio('FillBuffer', sound_handle, beep_high);
