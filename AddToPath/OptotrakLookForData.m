@@ -41,6 +41,7 @@ filepath = [opto.DIRECTORY_DATA opto.trigger.filename];
 recording_should_be_done = false;
 timed_out = false;
 trigger_key_pressed = false;
+time_found = nan;
 while 1
     t = GetSecs;
     
