@@ -45,7 +45,7 @@ if opto.NO_FILES
 end
 
 %create check criteria
-if exist('override_search', 'var')
+if exist('override_check', 'var')
     check_settings = override_check;
 else
     check_settings = opto.DEFAULT_CHECK;
