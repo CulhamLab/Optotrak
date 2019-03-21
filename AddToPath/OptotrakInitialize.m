@@ -196,7 +196,7 @@ timestamp = sprintf('_%d-%d-%d_%d-%d_%d',c([4 5 6 3 2 1]));
 opto.FILENAME_SAVE = [opto.FILENAME_DATA timestamp '.mat'];
 
 %% Create filename format for data search
-opto.FILENAME_DATA = [opto.FILENAME_DATA '_###.dat'];
+opto.FILENAME_DATA = [opto.FILENAME_DATA '_opto_###.dat'];
 
 %% Open audio player and make/add beep
 if opto.SOUND.PLAY_SOUNDS
