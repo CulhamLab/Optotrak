@@ -83,6 +83,7 @@ end
 if ~isnan(opto.trigger.trial)
     opto.trial(opto.trigger.trial).data = opto.trigger.data;
     opto.trial(opto.trigger.trial).data_passes_checks = data_passes_checks;
+    opto.trial(opto.trigger.trial).check_settings = check_settings;
 end
 
 %play beeps if data did not pass **WILL WAIT FOR BEEP TO FINISH**
