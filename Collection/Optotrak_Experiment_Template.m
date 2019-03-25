@@ -67,6 +67,9 @@ p.SOUND.VOLUME = 1; %1 = 100%
 
 %% Preparations
 
+%track verison of script used
+d.git_info = GetGitInfo;
+
 %set key values
 KbName('UnifyKeyNames');
 for key = fields(p.KEYS)'
