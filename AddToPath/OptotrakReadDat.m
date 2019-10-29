@@ -64,28 +64,48 @@ data.duration_msec = frame_total / framerate * 1000;
 %NOTE: velocity and acceleration are /sec (not /frame) (OTDisplay does the same)
 number_measures = 5;
 data.xyzva = nan(frame_total , (number_IREDs*number_measures) + 2);
+data.xyzva_rounded = data.xyzva;
 data.ired = repmat(struct('X', nan(framerate,1), 'Y', nan(framerate,1), 'Z', nan(framerate,1), 'Velocity', nan(framerate,1), 'Accelation', nan(framerate,1)), [number_IREDs 1]);
+data.ired_rounded = data.ired;
 for IRED = 1:number_IREDs
     col_in = ((IRED-1)*3)+1;
     col_out = ((IRED-1)*number_measures)+1;
     xyz_this = raw(:,col_in:col_in+2);
-    data.xyzva(:,col_out:col_out+2) = round(xyz_this, 1); %accurate to ~10th of a mm (OTDisplay also rounds)
     
-    %OTDisplay is doing something different for V and A, hold off on this
-% % %     %until sorted out (leave as nan for now)
-% % %     pos_dif_squared = (xyz_this(2:end,:) - xyz_this(1:end-1,:)) .^ 2;
-% % %     v = [0; sqrt(sqrt(pos_dif_squared(:,1) + pos_dif_squared(:,2)).^2 + pos_dif_squared(:,3))] * framerate;
-% % %     a = [0; diff(v)] * framerate;
-% % %     data.xyzva(:,col_out+3) = v;
-% % %     data.xyzva(:,col_out+4) = a;
+    %XYZ
+    data.xyzva(:,col_out:col_out+2) = xyz_this;
+    
+    xyz_rounded = round(xyz_this, 1); %OTDisplay also rounds
+    data.xyzva_rounded(:,col_out:col_out+2) = xyz_rounded;
+    
+    %calc vel
+    raw_v = [0; sqrt(sum(diff(xyz_this) .^ 2, 2))] * framerate;
+    v = (raw_v(1:end-1) + raw_v(2:end)) / 2;
+    v(end+1) = raw_v(end);
+    data.xyzva(:,col_out+3) = v;
+    
+    v_rounded = round(v, 1); %OTDisplay also rounds
+    data.xyzva_rounded(:,col_out+3) = v_rounded;
+    
+    %calc accel
+    raw_a = [0; diff(v)] * framerate;
+    a = (raw_a(1:end-1) + raw_a(2:end)) / 2;
+    a(end+1) = raw_a(end);
+    data.xyzva(:,col_out+4) = a;
+    
+    a_rounded = round(a, 1); %OTDisplay also rounds
+    data.xyzva_rounded(:,col_out+4) = a_rounded;
 
     %alternative format
     data.ired(IRED).X = xyz_this(:, 1);
     data.ired(IRED).Y = xyz_this(:, 2);
     data.ired(IRED).Z = xyz_this(:, 3);
-% % %     %see above
-% % %     data.ired(IRED).Velocity = v;
-% % %     data.ired(IRED).Accelation = a;
-
-    data.notice = 'IRED Velocity and Acceleration are set NaN in this file because the method needs to be updated to match OTDisplay''s output.';
+    data.ired(IRED).Velocity = v;
+    data.ired(IRED).Accelation = a;
+    
+    data.ired_rounded(IRED).X = xyz_rounded(:, 1);
+    data.ired_rounded(IRED).Y = xyz_rounded(:, 2);
+    data.ired_rounded(IRED).Z = xyz_rounded(:, 3);
+    data.ired_rounded(IRED).Velocity = v_rounded;
+    data.ired_rounded(IRED).Accelation = a_rounded;
 end
