@@ -109,3 +109,6 @@ for IRED = 1:number_IREDs
     data.ired_rounded(IRED).Velocity = v_rounded;
     data.ired_rounded(IRED).Accelation = a_rounded;
 end
+
+%record filepath
+data.filepath = filepath;
