@@ -9,7 +9,7 @@ global globals
 globals = struct;
 
 %% GUI - Set text
-name = 'Script 1: Collect Data From Txt Files';
+name = 'Script 1: Collect Data (txt or mat)';
 set(fig,'name',name);
 texts = findall(fig, 'style', 'text');
 for t = texts'
