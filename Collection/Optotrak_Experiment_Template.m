@@ -55,8 +55,8 @@ p.OPTO.FILENAME_DATA = p.PATH.FILE_OPTO;
 p.OPTO.DEBUG = p.DEBUG;
 p.OPTO.NO_FILES = p.DEBUG;
 p.OPTO.TIMEOUT_MSEC = 1000;
-p.OPTO.DEFAULT_CHECK.ireds_for_percent_check = 2:3; %example: default to require >80% unblocked frames in ireds 2 and 3 unless override is passed to OptotrakCheckData
-p.OPTO.DEFAULT_CHECK.minimum_percent_present = 80;  %example: default to require >80% unblocked frames in ireds 2 and 3 unless override is passed to OptotrakCheckData
+p.OPTO.DEFAULT_CHECK.ireds_for_percent_check = 2:3; %example: default to require >80% unblocked frames in ireds 2 and 3 unless override is passed to Optotrak.Collection.CheckData
+p.OPTO.DEFAULT_CHECK.minimum_percent_present = 80;  %example: default to require >80% unblocked frames in ireds 2 and 3 unless override is passed to Optotrak.Collection.CheckData
 p.OPTO.KEYS = p.KEYS; %use same STOP and CONTINUE keys
 
 %sound
@@ -142,7 +142,7 @@ if ~p.DEBUG
 end
 
 %% Optotrak Initialization
-OptotrakInitialize(p.OPTO);
+Optotrak.Collection.Initialize(p.OPTO);
 
 %% Wait for key to begin (could display some info to experimenter here)
 
@@ -241,7 +241,7 @@ while 1 %repeating trials is much more simples in a while loop than a for loop
     %display trial info
     d.trial_info(trial)
     
-    %DON'T call OptotrakPrepareTrigger yet! Could still loop back to repeat prior trial
+    %DON'T call Optotrak.Collection.PrepareTrigger yet! Could still loop back to repeat prior trial
     
     %name of condition
     label_string = [d.trial_info(trial).task ' ' d.trial_info(trial).target];
@@ -290,19 +290,19 @@ while 1 %repeating trials is much more simples in a while loop than a for loop
     d.trial_info(trial).timing.duration_prepare_trial = GetSecs - time_start_trial_prep;
 	
     %prepare optotrak for trial
-    OptotrakPrepareTrigger(trial);
+    Optotrak.Collection.PrepareTrigger(trial);
     
     %prepare high beep
     PsychPortAudio('FillBuffer', sound_handle, beep_high);
     
     %start opto trigger
-    d.trial_info(trial).timing.trigger_opto_start = OptotrakTriggerStart;
+    d.trial_info(trial).timing.trigger_opto_start = Optotrak.Collection.TriggerStart;
     
     %any other time-sensitive start-of-trial actions
     PsychPortAudio('Start', sound_handle); %start high beep
     
     %finish opto triggering
-    d.trial_info(trial).timing.trigger_opto_stop = OptotrakTriggerStop;
+    d.trial_info(trial).timing.trigger_opto_stop = Optotrak.Collection.TriggerStop;
     
     %trial plays out...
     PsychPortAudio('Stop', sound_handle, 1); %stop beep once finished to prevent potential noise
@@ -327,7 +327,7 @@ while 1 %repeating trials is much more simples in a while loop than a for loop
     PsychPortAudio('Start', sound_handle); %start low beep
     
     %check optotrak
-    [d.trial_info(trial).opto_data_passes_checks, d.trial_info(trial).opto_data] = OptotrakCheckData;
+    [d.trial_info(trial).opto_data_passes_checks, d.trial_info(trial).opto_data] = Optotrak.Collection.CheckData;
     
     %auto-repeat if issue in opto data
     if ~d.trial_info(trial).opto_data_passes_checks
@@ -346,7 +346,7 @@ end
 TryCloseAudio(sound_handle);
 global opto
 save([p.PATH.DIR_MAT_DATA p.PATH.FILE_DATA], 'p', 'd', 'opto');
-OptotrakComplete
+Optotrak.Collection.Complete
 disp Complete!
 
 %% Catch

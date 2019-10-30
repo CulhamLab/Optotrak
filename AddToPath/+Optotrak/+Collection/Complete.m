@@ -1,4 +1,4 @@
-%[filepath, opto] = OptotrakComplete
+%[filepath, opto] = Complete
 %
 %An optional script to close the audio player if it is still open and save
 %the opto struct to mat file. Saves to the dat file directory with a name
@@ -11,7 +11,7 @@
 % 2. time of trigger start
 % 3. whether data passed checks or not
 % 4. the data structure
-function [filepath, opto] = OptotrakComplete
+function [filepath, opto] = Complete
 global opto
 
 %% Close audio player
@@ -25,7 +25,7 @@ end
 filepath = [opto.DIRECTORY_DATA  opto.FILENAME_SAVE];
 fprintf('Writing opto struct to: %s\n', filepath);
 if exist(filepath, 'file')
-    OptotrakWarning('The mat file already exists so the complete script has already been run. The prior file will be overwritten.');
+    Warning('The mat file already exists so the complete script has already been run. The prior file will be overwritten.');
 end
 save(filepath, 'opto')
 
