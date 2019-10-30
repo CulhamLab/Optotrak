@@ -1,4 +1,4 @@
-%[found] = LookForData
+%[found, filepath] = LookForData
 %
 %Look for the data file (.dat) of the planned trigger. The planned trigger
 %must be stopped before beginning the search.
