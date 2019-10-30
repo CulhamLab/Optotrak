@@ -1,4 +1,4 @@
-%OptotrakInitialize(parameters)
+%Initialize(parameters)
 %
 %TODO: description
 %
@@ -21,7 +21,7 @@
 %  Any constant in the opto struct can be overriden by passing a matching field in the parameters structure
 %  Any other fields in the parameter structure will be ignored
 %
-function OptotrakInitialize(parameters)
+function Initialize(parameters)
 
 %% Global Struct
 global opto
@@ -42,7 +42,7 @@ opto.DEBUG = false; %if true, prevents use of hardware for testing on other PCs 
 opto.NO_FILES = false; %if true, data files will not be searched for or checked
 
 %sound
-opto.SOUND.PLAY_SOUNDS = true; %when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play (triggered by OptotrakCheckData)
+opto.SOUND.PLAY_SOUNDS = true; %when data cannot be found or contains blockage, beeps will be played. all other activity will be haulted while beeps play (triggered by CheckData)
 opto.SOUND.LATENCY = .050;
 opto.SOUND.CHANNELS = 2;
 opto.SOUND.PLAY_FREQUENCY = 44100;
@@ -152,7 +152,7 @@ opto.trigger.stopped = true; %ready to prepare trigger
 try
     AssertOpenGL();
 catch err
-    OptotrakWarning('PsychToolbox might not be installed or setup correctly!')
+    Warning('PsychToolbox might not be installed or setup correctly!')
     rethrow(err)
 end
 
@@ -165,7 +165,7 @@ end
 
 %% Warn and require key press if debug is on
 if opto.DEBUG
-    OptotrakWarning(sprintf('Debug mode is enabled. Hardware will not be used.\n\nPres %s to continue or %s to stop.\n', opto.KEYS.CONTINUE.NAME, opto.KEYS.STOP.NAME))
+    Warning(sprintf('Debug mode is enabled. Hardware will not be used.\n\nPres %s to continue or %s to stop.\n', opto.KEYS.CONTINUE.NAME, opto.KEYS.STOP.NAME))
     pressed = false;
     while 1
         [~,~,keys] = KbCheck(-1);
@@ -234,7 +234,7 @@ end
 fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device...')
 
 %prepare to trigger
-OptotrakPrepareTrigger;
+PrepareTrigger;
 
 %update global to get latest filename (required to updated global on older versions of MATLAB) 
 global opto
@@ -259,7 +259,7 @@ if ~opto.DEBUG
         %set output to zeros for line 1 to 40
         putvalue(opto.dio.line(1:40), zeros(1,40)); 
     catch err
-        OptotrakWarning(err);
+        Warning(err);
         error('Could not connect to Optotrak PC via dio. Most likely, this is the result of running the script on another PC without enabling DEBUG.')
     end
 else
@@ -267,7 +267,7 @@ else
 end
 
 %send an actual trigger even though it shouldn't be needed (this is done to set timing data)
-OptotrakTriggerFull;
+TriggerFull;
 
 fprintf('connection established.\n')
 
@@ -288,7 +288,7 @@ while 1
 
         %wait for file
         fprintf('\nWaiting for %s to become available...\n', opto.trigger.filename);
-        found = OptotrakLookForData;
+        found = LookForData;
 
         if found
             %update global to get latest filename (required to updated global on older versions of MATLAB) 
@@ -296,12 +296,12 @@ while 1
             fprintf('\n%s found!', opto.trigger.filename);
             
             %if data is good, complete
-            if OptotrakCheckData
+            if CheckData
                 break
             end
         end
     catch err
-        OptotrakWarning(err.message);
+        Warning(err.message);
     end
     
     fprintf('\nAn issue occured (see above). Press %s when you are ready to send another test trigger.\n', opto.KEYS.TRIGGER.NAME);
@@ -318,8 +318,8 @@ while 1
         end
     end
     
-    OptotrakPrepareTrigger;
-    OptotrakTriggerFull;
+    PrepareTrigger;
+    TriggerFull;
     global opto
 end
 

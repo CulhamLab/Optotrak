@@ -1,4 +1,4 @@
-%[data] = OptotrakReadDat(filepath)
+%[data] = ReadDat(filepath)
 %
 %Reads a dat file directly given full filepath, processes the raw data in
 %the same way that OTDisplay would and returns the following data structure:
@@ -11,7 +11,7 @@
 % array of ired structures containing fields for X, Y, Z, Velocity, and Accelation (same information as xyzva but in another format)
 %
 %Adapted from: https://motorbehaviour.wordpress.com/2010/11/06/open-optotrak-files-in-matlab/
-function [data] = OptotrakReadDat(filepath)
+function [data] = ReadDat(filepath)
 
 %read header
 fid = fopen(filepath, 'r');

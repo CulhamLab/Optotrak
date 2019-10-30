@@ -1,4 +1,4 @@
-%[found] = OptotrakLookForData
+%[found] = LookForData
 %
 %Look for the data file (.dat) of the planned trigger. The planned trigger
 %must be stopped before beginning the search.
@@ -7,7 +7,7 @@
 % 1. function called after the timeout window has already elapsed
 % 2. file was not found within the timeout window
 % 3. file was found too early (before it should have been possible)
-function [found, filepath] = OptotrakLookForData
+function [found, filepath] = LookForData
 global opto
 
 %error if trigger isn't yet stopped
@@ -22,7 +22,7 @@ end
 
 %debug NO_FILES
 if opto.NO_FILES
-    OptotrakWarning('NO_FILES is enabled so LookForData is returning true without looking');
+    Warning('NO_FILES is enabled so LookForData is returning true without looking');
     found = true;
     filepath = 'DEBUG';
     return
@@ -65,7 +65,7 @@ while 1
     if ~timed_out && (t > opto.trigger.time_file_search_timeout)
         if opto.initialized
             %timeout, file not found
-            OptotrakWarning(sprintf('Timeout occured while searching for file: %s', filepath));
+            Warning(sprintf('Timeout occured while searching for file: %s', filepath));
             found = false;
             break;
         else
@@ -88,8 +88,8 @@ while 1
     elseif ~opto.initialized && ~trigger_key_pressed && keys(opto.KEYS.TRIGGER.VALUE)
         %Initialization: retrigger key
         fprintf('Sending another trigger (may be delayed if prior trigger was recent)...\n');
-        OptotrakPrepareTrigger;
-        OptotrakTriggerFull;
+        PrepareTrigger;
+        TriggerFull;
         global opto
         filepath = [opto.DIRECTORY_DATA opto.trigger.filename];
         fprintf('Trigger sent! Waiting for %s\n', opto.trigger.filename);
@@ -108,7 +108,7 @@ if time_found < opto.trigger.time_expected_recording_end
     found = false;
     
     %warning
-    OptotrakWarning('A data file was found earlier than should have been possible. This is likely the data from an unplanned trigger.');
+    Warning('A data file was found earlier than should have been possible. This is likely the data from an unplanned trigger.');
 end
 
 %set whether latest file was found

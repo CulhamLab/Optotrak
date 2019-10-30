@@ -1,10 +1,10 @@
-%OptotrakPrepareTrigger(optional_trial_number)
+%PrepareTrigger(optional_trial_number)
 %
 %A trigger consists of:
-% OptotrakPrepareTrigger (slow, call this well before the trial begins)
-% OptotrakTriggerStart (fast, sets pin high to trigger OTCollect to start
+% PrepareTrigger (slow, call this well before the trial begins)
+% TriggerStart (fast, sets pin high to trigger OTCollect to start
 %                       recording immediately)
-% OptotrakTriggerStop (fast unless Start was called too recently because
+% TriggerStop (fast unless Start was called too recently because
 %                      OTCollect needs some time to detect the signal,
 %                      should be called before recording ends to prevent a 
 %                      potential false trigger, sets pin low)
@@ -16,12 +16,12 @@
 %If a trial number is provided, then the filename and trigger time will be
 %stored in the global opto struct.
 %
-%OptotrakPrepareTrigger may be called multiple times between recordings if
+%PrepareTrigger may be called multiple times between recordings if
 %needed, but cannot be called between a trigger start and stop.
 %
 %Script will hault until next trigger would be allowed (may be several
 %seconds)
-function OptotrakPrepareTrigger(optional_trial_number)
+function PrepareTrigger(optional_trial_number)
 global opto
 
 %wait until allowed to start trigger
