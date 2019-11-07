@@ -33,12 +33,12 @@ end
 
 %look for data if not already done
 if ~opto.trigger.file_searched
-    LookForData;
+    Optotrak.Collection.LookForData;
 end
 
 %debug NO_FILES
 if opto.NO_FILES
-    Warning('NO_FILES is enabled so CheckData is returning true without looking');
+    Optotrak.Collection.Warning('NO_FILES is enabled so CheckData is returning true without looking');
     data_passes_checks = true;
     data = nan;
     return
@@ -57,7 +57,7 @@ end
 
 %if file was not found, data not okay
 if ~opto.trigger.file_found
-    Warning('Data cannot be checked because file could not be found!')
+    Optotrak.Collection.Warning('Data cannot be checked because file could not be found!')
     data_passes_checks = false;
     opto.trigger.data = [];
 else
@@ -77,7 +77,7 @@ else
     end
 
     %read data
-    opto.trigger.data = ReadDat(opto.trigger.file_located_filepath);
+    opto.trigger.data = Optotrak.Collection.ReadDat(opto.trigger.file_located_filepath);
 
     %check data
     data_passes_checks = CheckThisData(opto, check_settings);
@@ -114,15 +114,15 @@ data_passes_checks = true;
 
 %check main parameters
 if opto.trigger.data.framerate ~= opto.SAMPLE_RATE_HZ
-    Warning(sprintf('Sample rate in file (%d hz) does not match parameters (%d hz)!', opto.trigger.data.framerate, opto.SAMPLE_RATE_HZ))
+    Optotrak.Collection.Warning(sprintf('Sample rate in file (%d hz) does not match parameters (%d hz)!', opto.trigger.data.framerate, opto.SAMPLE_RATE_HZ))
     data_passes_checks = false;
     return
 elseif opto.trigger.data.number_IREDs ~= opto.NUMBER_IREDS
-    Warning(sprintf('Number of IREDs in file (%d) does not match parameters (%d)!', opto.trigger.data.number_IREDs, opto.NUMBER_IREDS))
+    Optotrak.Collection.Warning(sprintf('Number of IREDs in file (%d) does not match parameters (%d)!', opto.trigger.data.number_IREDs, opto.NUMBER_IREDS))
     data_passes_checks = false;
     return
 elseif opto.trigger.data.duration_msec ~= opto.RECORD_MSEC
-    Warning(sprintf('Duration in file (%d msec) does not match parameters (%d msec)!', opto.trigger.data.duration_msec, opto.RECORD_MSEC))
+    Optotrak.Collection.Warning(sprintf('Duration in file (%d msec) does not match parameters (%d msec)!', opto.trigger.data.duration_msec, opto.RECORD_MSEC))
     data_passes_checks = false;
     return
 end
@@ -132,7 +132,7 @@ if ~isempty(check_settings.ireds_for_percent_check) && (check_settings.minimum_p
     valid_frames = ~any(isnan([opto.trigger.data.ired([check_settings.ireds_for_percent_check]).X]),2);
     percent = sum(valid_frames) / length(valid_frames) * 100;
     if percent < check_settings.minimum_percent_present
-        Warning(sprintf('Data contains too few valid frames: %g%% (set to require %g%%)!', round(percent, 2), round(check_settings.minimum_percent_present, 2)))
+        Optotrak.Collection.Warning(sprintf('Data contains too few valid frames: %g%% (set to require %g%%)!', round(percent, 2), round(check_settings.minimum_percent_present, 2)))
         data_passes_checks = false;
         return
     end
@@ -142,7 +142,7 @@ end
 if ~isempty(check_settings.required_ireds_at_frames) 
     ind_invalid = isnan(arrayfun(@(x, y) opto.trigger.data.ired(x).X(y), check_settings.required_ireds_at_frames(:,1), check_settings.required_ireds_at_frames(:,2)));
     if any(ind_invalid)
-        Warning(sprintf('Data contains the following missing ired-frame pair(s):\n%s', sprintf('IRED %d at frame %d\n', check_settings.required_ireds_at_frames(ind_invalid,:))))
+        Optotrak.Collection.Warning(sprintf('Data contains the following missing ired-frame pair(s):\n%s', sprintf('IRED %d at frame %d\n', check_settings.required_ireds_at_frames(ind_invalid,:))))
         data_passes_checks = false;
         return
     end

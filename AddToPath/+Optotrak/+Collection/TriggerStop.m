@@ -39,7 +39,7 @@ end
 
 %stop trigger
 if opto.DEBUG
-    Warning('DEBUG: trigger would have stopped');
+    Optotrak.Collection.Warning('DEBUG: trigger would have stopped');
 else
     putvalue(opto.dio.line(opto.DIO.PIN), opto.DIO.LOW);
 end
@@ -48,7 +48,7 @@ opto.trigger.stopped = true;
 
 %if recording had already ended, delay next trigger in case a false trigger was created by setting pin low
 if GetSecs > opto.trigger.time_expected_recording_end
-    Warning('This trigger end is very late so the next trigger will be delayed in case a false trigger was just sent.')
+    Optotrak.Collection.Warning('This trigger end is very late so the next trigger will be delayed in case a false trigger was just sent.')
     opto.trigger.time_allow_trigger_start = time_stop + (opto.RECORD_MSEC / 1000) +(opto.TIMING.BUFFER_TRIGGER_MSEC / 1000);
 end
 
