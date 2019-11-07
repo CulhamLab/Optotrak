@@ -22,7 +22,7 @@ end
 
 %debug NO_FILES
 if opto.NO_FILES
-    Warning('NO_FILES is enabled so LookForData is returning true without looking');
+    Optotrak.Collection.Warning('NO_FILES is enabled so LookForData is returning true without looking');
     found = true;
     filepath = 'DEBUG';
     return
@@ -65,7 +65,7 @@ while 1
     if ~timed_out && (t > opto.trigger.time_file_search_timeout)
         if opto.initialized
             %timeout, file not found
-            Warning(sprintf('Timeout occured while searching for file: %s', filepath));
+            Optotrak.Collection.Warning(sprintf('Timeout occured while searching for file: %s', filepath));
             found = false;
             break;
         else
@@ -88,8 +88,8 @@ while 1
     elseif ~opto.initialized && ~trigger_key_pressed && keys(opto.KEYS.TRIGGER.VALUE)
         %Initialization: retrigger key
         fprintf('Sending another trigger (may be delayed if prior trigger was recent)...\n');
-        PrepareTrigger;
-        TriggerFull;
+        Optotrak.Collection.PrepareTrigger;
+        Optotrak.Collection.TriggerFull;
         global opto
         filepath = [opto.DIRECTORY_DATA opto.trigger.filename];
         fprintf('Trigger sent! Waiting for %s\n', opto.trigger.filename);
@@ -108,7 +108,7 @@ if time_found < opto.trigger.time_expected_recording_end
     found = false;
     
     %warning
-    Warning('A data file was found earlier than should have been possible. This is likely the data from an unplanned trigger.');
+    Optotrak.Collection.Warning('A data file was found earlier than should have been possible. This is likely the data from an unplanned trigger.');
 end
 
 %set whether latest file was found

@@ -20,7 +20,7 @@ end
 
 %start trigger
 if opto.DEBUG
-    Warning('DEBUG: trigger would have started');
+    Optotrak.Collection.Warning('DEBUG: trigger would have started');
 else
     putvalue(opto.dio.line(opto.DIO.PIN), opto.DIO.HIGH);
 end

@@ -152,7 +152,7 @@ opto.trigger.stopped = true; %ready to prepare trigger
 try
     AssertOpenGL();
 catch err
-    Warning('PsychToolbox might not be installed or setup correctly!')
+    Optotrak.Collection.Warning('PsychToolbox might not be installed or setup correctly!')
     rethrow(err)
 end
 
@@ -165,7 +165,7 @@ end
 
 %% Warn and require key press if debug is on
 if opto.DEBUG
-    Warning(sprintf('Debug mode is enabled. Hardware will not be used.\n\nPres %s to continue or %s to stop.\n', opto.KEYS.CONTINUE.NAME, opto.KEYS.STOP.NAME))
+    Optotrak.Collection.Warning(sprintf('Debug mode is enabled. Hardware will not be used.\n\nPres %s to continue or %s to stop.\n', opto.KEYS.CONTINUE.NAME, opto.KEYS.STOP.NAME))
     pressed = false;
     while 1
         [~,~,keys] = KbCheck(-1);
@@ -234,7 +234,7 @@ end
 fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device...')
 
 %prepare to trigger
-PrepareTrigger;
+Optotrak.Collection.PrepareTrigger;
 
 %update global to get latest filename (required to updated global on older versions of MATLAB) 
 global opto
@@ -259,7 +259,7 @@ if ~opto.DEBUG
         %set output to zeros for line 1 to 40
         putvalue(opto.dio.line(1:40), zeros(1,40)); 
     catch err
-        Warning(err);
+        Optotrak.Collection.Warning(err);
         error('Could not connect to Optotrak PC via dio. Most likely, this is the result of running the script on another PC without enabling DEBUG.')
     end
 else
@@ -267,7 +267,7 @@ else
 end
 
 %send an actual trigger even though it shouldn't be needed (this is done to set timing data)
-TriggerFull;
+Optotrak.Collection.TriggerFull;
 
 fprintf('connection established.\n')
 
@@ -288,7 +288,7 @@ while 1
 
         %wait for file
         fprintf('\nWaiting for %s to become available...\n', opto.trigger.filename);
-        found = LookForData;
+        found = Optotrak.Collection.LookForData;
 
         if found
             %update global to get latest filename (required to updated global on older versions of MATLAB) 
@@ -296,12 +296,12 @@ while 1
             fprintf('\n%s found!', opto.trigger.filename);
             
             %if data is good, complete
-            if CheckData
+            if Optotrak.Collection.CheckData
                 break
             end
         end
     catch err
-        Warning(err.message);
+        Optotrak.Collection.Warning(err.message);
     end
     
     fprintf('\nAn issue occured (see above). Press %s when you are ready to send another test trigger.\n', opto.KEYS.TRIGGER.NAME);
@@ -318,8 +318,8 @@ while 1
         end
     end
     
-    PrepareTrigger;
-    TriggerFull;
+    Optotrak.Collection.PrepareTrigger;
+    Optotrak.Collection.TriggerFull;
     global opto
 end
 

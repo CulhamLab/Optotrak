@@ -18,5 +18,5 @@
 %trigger start, call TriggerStart instead and then call
 %TriggerStop later (before recording finishes).
 function [time_started, time_stopped] = TriggerFull
-time_started = TriggerStart;
-time_stopped = TriggerStop;
+time_started = Optotrak.Collection.TriggerStart;
+time_stopped = Optotrak.Collection.TriggerStop;
