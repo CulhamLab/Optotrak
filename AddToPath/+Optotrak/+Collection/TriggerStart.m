@@ -28,7 +28,7 @@ time_started = GetSecs;
 opto.trigger.started = true;
 
 %timing
-opto.trigger.time_expected_recording_end = time_started + (opto.RECORD_MSEC / 1000);
+opto.trigger.time_expected_recording_end = time_started + (opto.TRIAL_DURATION_MSEC / 1000);
 opto.trigger.time_allow_trigger_stop =     time_started + (opto.TIMING.MINIMUM_BETWEEN_HIGH_LOW_MSEC / 1000);
 opto.trigger.time_file_search_timeout =    opto.trigger.time_expected_recording_end + (opto.TIMING.TIMEOUT_MSEC / 1000);
 opto.trigger.time_allow_trigger_start =    opto.trigger.time_expected_recording_end + (opto.TIMING.BUFFER_TRIGGER_MSEC / 1000);
