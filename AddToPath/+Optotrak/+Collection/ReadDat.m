@@ -6,7 +6,7 @@
 % framerate (per second)
 % frame_total
 % duration_msec
-% number_IREDs
+% IRED_NUMBER
 % xyzva (same format as OTDisplay's ascii output)
 % array of ired structures containing fields for X, Y, Z, Velocity, and Accelation (same information as xyzva but in another format)
 %
@@ -16,9 +16,9 @@ function [data] = ReadDat(filepath)
 %read header
 fid = fopen(filepath, 'r');
 fread(fid, 1, 'char');                      % 32
-number_IREDs = fread(fid, 1, 'short');      % items per frame
+IRED_NUMBER = fread(fid, 1, 'short');      % items per frame
 subitem_total = fread(fid, 1, 'short');     % subitems per frame
-column_total = number_IREDs * subitem_total;
+column_total = IRED_NUMBER * subitem_total;
 frame_total = fread(fid, 1, 'int');         % number of frames
 framerate = fread(fid, 1, 'float');         % collection frame frequency
 fread(fid, 60, 'char=>char');               % user comments
@@ -57,17 +57,17 @@ end
 data.framerate = framerate;
 data.timestamp = [time ' ' date];
 data.frame_total = frame_total;
-data.number_IREDs = number_IREDs;
+data.IRED_NUMBER = IRED_NUMBER;
 data.duration_msec = frame_total / framerate * 1000;
 
 %add vel per IRED, accel per IRED, and overall VD/VA coloumns (leave the last two nan)
 %NOTE: velocity and acceleration are /sec (not /frame) (OTDisplay does the same)
 number_measures = 5;
-data.xyzva = nan(frame_total , (number_IREDs*number_measures) + 2);
+data.xyzva = nan(frame_total , (IRED_NUMBER*number_measures) + 2);
 data.xyzva_rounded = data.xyzva;
-data.ired = repmat(struct('X', nan(framerate,1), 'Y', nan(framerate,1), 'Z', nan(framerate,1), 'Velocity', nan(framerate,1), 'Accelation', nan(framerate,1)), [number_IREDs 1]);
+data.ired = repmat(struct('X', nan(framerate,1), 'Y', nan(framerate,1), 'Z', nan(framerate,1), 'Velocity', nan(framerate,1), 'Accelation', nan(framerate,1)), [IRED_NUMBER 1]);
 data.ired_rounded = data.ired;
-for IRED = 1:number_IREDs
+for IRED = 1:IRED_NUMBER
     col_in = ((IRED-1)*3)+1;
     col_out = ((IRED-1)*number_measures)+1;
     xyz_this = raw(:,col_in:col_in+2);

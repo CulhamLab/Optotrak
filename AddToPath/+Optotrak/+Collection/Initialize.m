@@ -6,11 +6,11 @@
 %
 %PARAMETERS
 %  Required parameters:
-%  NUMBER_IREDS   (must match OTCollect)
-%  RECORD_MSEC    (must match OTCollect)
-%  SAMPLE_RATE_HZ (must match OTCollect)
-%  DIRECTORY_DATA (must match OTCollect)
-%  FILENAME_DATA  (must match OTCollect not including the "_###.dat" that is automatically added)
+%  FRAME_RATE 	  		(must match OTCollect)
+%  IRED_NUMBER    		(must match OTCollect)
+%  TRIAL_DURATION_MSEC  (must match OTCollect)
+%  DIRECTORY_DATA 		(must match OTCollect)
+%  FILENAME_DATA  		(must match OTCollect not including the "_###.dat" that is automatically added)
 %
 %  Common override parameters (optional):
 %  DEBUG             (defaults to false. if true, prevents use of hardware for testing on other PCs - still excpects data files to appear unless NO_FILES is also set true)
@@ -117,7 +117,7 @@ while 1
 end
    
 %check and set required fields
-otcollect_fields = {'NUMBER_IREDS' 'RECORD_MSEC' 'SAMPLE_RATE_HZ' 'DIRECTORY_DATA' 'FILENAME_DATA'};
+otcollect_fields = {'FRAME_RATE' 'IRED_NUMBER' 'TRIAL_DURATION_MSEC' 'DIRECTORY_DATA' 'FILENAME_DATA'};
 for f = otcollect_fields
     f = f{1};
     if ~isfield(parameters, f)
@@ -129,7 +129,7 @@ for f = otcollect_fields
 end
 
 %create default check
-opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.NUMBER_IREDS; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
+opto.DEFAULT_CHECK.ireds_for_percent_check = 1:parameters.IRED_NUMBER; %ireds to check for the min percent (default to all IREDs) (all of these IREDs must be available for a frame to be considered valid)
 opto.DEFAULT_CHECK.minimum_percent_present = 70; %check fails if less than this % of frames are unblocked
 opto.DEFAULT_CHECK.required_ireds_at_frames = []; %[N-by-2] with rows of [ired# frame#] for an ired# that must be unblocked at frame#
 

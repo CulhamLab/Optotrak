@@ -113,16 +113,16 @@ function [data_passes_checks] = CheckThisData(opto, check_settings)
 data_passes_checks = true;
 
 %check main parameters
-if opto.trigger.data.framerate ~= opto.SAMPLE_RATE_HZ
-    Optotrak.Collection.Warning(sprintf('Sample rate in file (%d hz) does not match parameters (%d hz)!', opto.trigger.data.framerate, opto.SAMPLE_RATE_HZ))
+if opto.trigger.data.framerate ~= opto.FRAME_RATE
+    Optotrak.Collection.Warning(sprintf('Sample rate in file (%d hz) does not match parameters (%d hz)!', opto.trigger.data.framerate, opto.FRAME_RATE))
     data_passes_checks = false;
     return
-elseif opto.trigger.data.number_IREDs ~= opto.NUMBER_IREDS
-    Optotrak.Collection.Warning(sprintf('Number of IREDs in file (%d) does not match parameters (%d)!', opto.trigger.data.number_IREDs, opto.NUMBER_IREDS))
+elseif opto.trigger.data.IRED_NUMBER ~= opto.IRED_NUMBER
+    Optotrak.Collection.Warning(sprintf('Number of IREDs in file (%d) does not match parameters (%d)!', opto.trigger.data.IRED_NUMBER, opto.IRED_NUMBER))
     data_passes_checks = false;
     return
-elseif opto.trigger.data.duration_msec ~= opto.RECORD_MSEC
-    Optotrak.Collection.Warning(sprintf('Duration in file (%d msec) does not match parameters (%d msec)!', opto.trigger.data.duration_msec, opto.RECORD_MSEC))
+elseif opto.trigger.data.duration_msec ~= opto.TRIAL_DURATION_MSEC
+    Optotrak.Collection.Warning(sprintf('Duration in file (%d msec) does not match parameters (%d msec)!', opto.trigger.data.duration_msec, opto.TRIAL_DURATION_MSEC))
     data_passes_checks = false;
     return
 end
