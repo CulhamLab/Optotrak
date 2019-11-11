@@ -307,7 +307,7 @@ while 1 %repeating trials is much more simples in a while loop than a for loop
     %trial plays out...
     PsychPortAudio('Stop', sound_handle, 1); %stop beep once finished to prevent potential noise
     PsychPortAudio('FillBuffer', sound_handle, beep_low);
-    tend = d.trial_info(trial).timing.trigger_opto_start + (p.OPTO.RECORD_MSEC / 1000);
+    tend = d.trial_info(trial).timing.trigger_opto_start + (p.OPTO.TRIAL_DURATION_MSEC / 1000);
     while 1
         %time to end trial?
         if GetSecs >= tend
