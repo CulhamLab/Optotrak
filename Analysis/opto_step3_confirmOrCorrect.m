@@ -953,6 +953,15 @@ else %file selected
     
     %remove header
     xls = xls(2:end,:);
+    
+    %change numeric to string
+    ind_numeric = cellfun(@isnumeric, xls);
+    xls(ind_numeric) = cellfun(@num2str, xls(ind_numeric), 'UniformOutput', false);
+    ind_true = cellfun(@(x) islogical(x) && x, xls);
+    xls(ind_true) = {'TRUE'};
+    ind_false = cellfun(@(x) islogical(x) && ~x, xls);
+    xls(ind_false) = {'FALSE'};
+    
     %if number of trials is incorrect, use subset from globals.load.odat.trial_id
     number_trials_in_file = size(xls, 1);
     if (globals.params.numTrial ~= number_trials_in_file) && (max(globals.load.odat.trial_id) <= number_trials_in_file)
