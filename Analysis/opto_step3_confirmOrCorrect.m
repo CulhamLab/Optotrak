@@ -413,7 +413,7 @@ hold(t,'on')
 %% On/Off
 [on,off] = getOnOff;
 d = off-on;
-rectangle('position',[on 0 d 1],'Parent',t,'FaceColor',globals.colours.MotionFrames,'EdgeColor','none')
+rectangle('position',[on -0.05 d 1.1],'Parent',t,'FaceColor',globals.colours.MotionFrames,'EdgeColor','none')
 
 %% Flags
 if get(globals.FigID.checkboxFlag,'value')
@@ -502,7 +502,7 @@ end
 %%
 hold(t,'off')
 set(t,'xtick',[],'ytick',[])
-axis(t,[1 globals.params.numFrame 0 1])
+axis(t,[1 globals.params.numFrame -0.05 1.05])
 
 end
 
@@ -953,9 +953,23 @@ else %file selected
     
     %remove header
     xls = xls(2:end,:);
+    
+    %change numeric to string
+    ind_numeric = cellfun(@isnumeric, xls);
+    xls(ind_numeric) = cellfun(@num2str, xls(ind_numeric), 'UniformOutput', false);
+    ind_true = cellfun(@(x) islogical(x) && x, xls);
+    xls(ind_true) = {'TRUE'};
+    ind_false = cellfun(@(x) islogical(x) && ~x, xls);
+    xls(ind_false) = {'FALSE'};
+    
+    %if number of trials is incorrect, use subset from globals.load.odat.trial_id
+    number_trials_in_file = size(xls, 1);
+    if (globals.params.numTrial ~= number_trials_in_file) && (max(globals.load.odat.trial_id) <= number_trials_in_file)
+        xls = xls(globals.load.odat.trial_id, :);
+        number_trials_in_file = size(xls, 1);
+    end
 
     %check if number of trials match + set trial labels
-    number_trials_in_file = size(xls, 1);
     if globals.params.numTrial == number_trials_in_file
         globals.trialLabels = arrayfun(@(x) [xls{x,2} sprintf(' %s', xls{x,3:end})], 1:number_trials_in_file, 'UniformOutput', false);
     else
