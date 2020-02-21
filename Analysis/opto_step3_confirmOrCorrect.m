@@ -413,7 +413,7 @@ hold(t,'on')
 %% On/Off
 [on,off] = getOnOff;
 d = off-on;
-rectangle('position',[on 0 d 1],'Parent',t,'FaceColor',globals.colours.MotionFrames,'EdgeColor','none')
+rectangle('position',[on -0.05 d 1.1],'Parent',t,'FaceColor',globals.colours.MotionFrames,'EdgeColor','none')
 
 %% Flags
 if get(globals.FigID.checkboxFlag,'value')
@@ -502,7 +502,7 @@ end
 %%
 hold(t,'off')
 set(t,'xtick',[],'ytick',[])
-axis(t,[1 globals.params.numFrame 0 1])
+axis(t,[1 globals.params.numFrame -0.05 1.05])
 
 end
 
