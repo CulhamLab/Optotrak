@@ -953,9 +953,14 @@ else %file selected
     
     %remove header
     xls = xls(2:end,:);
+    %if number of trials is incorrect, use subset from globals.load.odat.trial_id
+    number_trials_in_file = size(xls, 1);
+    if (globals.params.numTrial ~= number_trials_in_file) && (max(globals.load.odat.trial_id) <= number_trials_in_file)
+        xls = xls(globals.load.odat.trial_id, :);
+        number_trials_in_file = size(xls, 1);
+    end
 
     %check if number of trials match + set trial labels
-    number_trials_in_file = size(xls, 1);
     if globals.params.numTrial == number_trials_in_file
         globals.trialLabels = arrayfun(@(x) [xls{x,2} sprintf(' %s', xls{x,3:end})], 1:number_trials_in_file, 'UniformOutput', false);
     else
