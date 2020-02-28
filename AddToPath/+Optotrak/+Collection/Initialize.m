@@ -231,7 +231,7 @@ while 1
 end
 
 %% Setup dio, which will trigger a recording
-fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device...')
+fprintf('\nSetting up connection to Optotrak (via mcc digital aquisition device)...')
 
 %prepare to trigger
 Optotrak.Collection.PrepareTrigger;

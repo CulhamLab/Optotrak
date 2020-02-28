@@ -74,6 +74,7 @@ function [opto] = CheckNextFile(opto)
 if opto.NO_FILES
     opto.trigger.filename_number = 1;
     opto.trigger.filename = 'DEBUG';
+    return
 end
 
 %get list of all dat files
