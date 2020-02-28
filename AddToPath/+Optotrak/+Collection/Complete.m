@@ -22,12 +22,25 @@ if isfield(opto, 'sound_handle')
 end
 
 %% Save global struct
-filepath = [opto.DIRECTORY_DATA  opto.FILENAME_SAVE];
-fprintf('Writing opto struct to: %s\n', filepath);
-if exist(filepath, 'file')
-    Optotrak.Collection.Warning('The mat file already exists so the complete script has already been run. The prior file will be overwritten.');
+if opto.DEBUG
+    warning('Opto data file is not saved when DEBUG is active')
+else
+    filepath = [opto.DIRECTORY_DATA  opto.FILENAME_SAVE];
+    fprintf('Writing opto struct to: %s\n', filepath);
+    if exist(filepath, 'file')
+        Optotrak.Collection.Warning('The mat file already exists so the complete script has already been run. The prior file will be overwritten.');
+    end
+    try
+        save(filepath, 'opto')
+    catch
+        warning('Could not save to: %s\nWill now attempt to save "%s" to the current directory...', filepath, opto.FILENAME_SAVE);
+        if ~exist(opto.FILENAME_SAVE, 'file')
+            save(opto.FILENAME_SAVE, 'opto')
+        else
+            error('File already exists!')
+        end
+    end
 end
-save(filepath, 'opto')
 
 %% Done
 disp Completed!
