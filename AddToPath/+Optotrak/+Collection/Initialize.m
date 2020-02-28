@@ -186,8 +186,8 @@ if opto.DIRECTORY_DATA(end) ~= filesep
 end
 
 %check for dir
-if ~exist(opto.DIRECTORY_DATA, 'dir') && ~opto.NO_FILES
-    error('Data directory does not exist or is inaccessible: %s\n', opto.DIRECTORY_DATA)
+if ~opto.NO_FILES && ~exist(opto.DIRECTORY_DATA, 'dir')
+    error('Data directory does not exist, is inaccessible, or NO_FILES is true: %s\n', opto.DIRECTORY_DATA)
 end
 
 %% Create filename for save
