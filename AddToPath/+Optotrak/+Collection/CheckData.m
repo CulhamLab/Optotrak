@@ -40,7 +40,7 @@ end
 if opto.NO_FILES
     Optotrak.Collection.Warning('NO_FILES is enabled so CheckData is returning true without looking');
     data_passes_checks = true;
-    data = nan;
+    data = struct();
     return
 end
 
