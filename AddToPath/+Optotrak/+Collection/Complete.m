@@ -31,7 +31,11 @@ try
     save(filepath, 'opto')
 catch
     warning('Could not save to: %s\nWill now attempt to save "%s" to the current directory...', filepath, opto.FILENAME_SAVE);
-    save(opto.FILENAME_SAVE, 'opto')
+    if ~exist(opto.FILENAME_SAVE, 'file')
+        save(opto.FILENAME_SAVE, 'opto')
+    else
+        error('File already exists!')
+    end
 end
 
 %% Done
