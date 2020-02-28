@@ -27,7 +27,12 @@ fprintf('Writing opto struct to: %s\n', filepath);
 if exist(filepath, 'file')
     Optotrak.Collection.Warning('The mat file already exists so the complete script has already been run. The prior file will be overwritten.');
 end
-save(filepath, 'opto')
+try
+    save(filepath, 'opto')
+catch
+    warning('Could not save to: %s\nWill now attempt to save "%s" to the current directory...', filepath, opto.FILENAME_SAVE);
+    save(opto.FILENAME_SAVE, 'opto')
+end
 
 %% Done
 disp Completed!
