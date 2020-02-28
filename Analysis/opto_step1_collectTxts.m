@@ -115,27 +115,39 @@ if iscell(FileName)
         
         set(globals.processing,'string',sprintf('checking: %s', fn))
         
+        %if no .opto, look for p.OPTO
+        if ~isfield(file{fid}, 'opto')
+            if isfield(file{fid}.p, 'OPTO')
+                file{fid}.opto = file{fid}.p.OPTO;
+            else
+                DoError('Cannot locate opto info struct')
+            end
+        end
+        
+        %rename fields in old data
+        file{fid}.opto = RenameFields(file{fid}.opto);
+        
         %number ireds
         if fid == 1
-            number_IREDs = file{fid}.opto.NUMBER_IREDS;
-            set(globals.numIRED,'string',num2str(number_IREDs))
-        elseif number_IREDs ~= file{fid}.opto.NUMBER_IREDS
+            IRED_NUMBER_PER_TRIAL = file{fid}.opto.IRED_NUMBER_PER_TRIAL;
+            set(globals.numIRED,'string',num2str(IRED_NUMBER_PER_TRIAL))
+        elseif IRED_NUMBER_PER_TRIAL ~= file{fid}.opto.IRED_NUMBER_PER_TRIAL
             DoError('The number of IREDs is not consistent across mat files.')
             return;
         end
         
         %duration
         if fid == 1
-            duration_msec = file{fid}.opto.RECORD_MSEC;
-        elseif duration_msec ~= file{fid}.opto.RECORD_MSEC
+            duration_msec = file{fid}.opto.TRIAL_DURATION_MSEC;
+        elseif duration_msec ~= file{fid}.opto.TRIAL_DURATION_MSEC
             DoError('The duration is not consistent across mat files.')
             return;
         end
         
         %sample rate
         if fid == 1
-            sample_rate = file{fid}.opto.SAMPLE_RATE_HZ;
-        elseif sample_rate ~= file{fid}.opto.SAMPLE_RATE_HZ
+            sample_rate = file{fid}.opto.FRAME_RATE;
+        elseif sample_rate ~= file{fid}.opto.FRAME_RATE
             DoError('The sample rate is not consistent across mat files.')
             return;
         end
@@ -232,8 +244,11 @@ if iscell(FileName)
                 return;
             end
             
+            %rename old fields
+            data.opto_data = RenameFields(data.opto_data);
+            
             %more checks on each recording
-            if data.opto_data.number_IREDs ~= number_IREDs
+            if data.opto_data.IRED_NUMBER ~= IRED_NUMBER_PER_TRIAL
                 DoError(sprintf('The number of IREDs is not consistent in trial %d of %s', trial, fn))
                 return;
             elseif data.opto_data.framerate ~= sample_rate
@@ -271,7 +286,7 @@ if iscell(FileName)
         %store filepath
         odat.noround = noround;
         odat.sample_rate = sample_rate;
-        odat.number_IREDs = number_IREDs;
+        odat.number_IREDs = IRED_NUMBER_PER_TRIAL;
         odat.duration_msec = duration_msec;
         odat.number_frames = expected_frames;
         odat.number_trials = number_trials;
@@ -416,4 +431,22 @@ global globals
 set(globals.processing,'string','error')
 set(globals.numIRED,'string','error')
 set(globals.files,'string','error')
+end
+
+function [struct] = RenameFields(struct)
+if ~isfield(struct, 'IRED_NUMBER') && isfield(struct, 'number_IREDs')
+    struct.IRED_NUMBER = struct.number_IREDs;
+end
+if ~isfield(struct, 'IRED_NUMBER') && isfield(struct, 'NUMBER_IREDS')
+    struct.IRED_NUMBER = struct.NUMBER_IREDS;
+end
+if ~isfield(struct, 'IRED_NUMBER_PER_TRIAL') && isfield(struct, 'IRED_NUMBER')
+    struct.IRED_NUMBER_PER_TRIAL = struct.IRED_NUMBER;
+end
+if ~isfield(struct, 'TRIAL_DURATION_MSEC') && isfield(struct, 'RECORD_MSEC')
+    struct.TRIAL_DURATION_MSEC = struct.RECORD_MSEC;
+end
+if ~isfield(struct, 'FRAME_RATE') && isfield(struct, 'SAMPLE_RATE_HZ')
+    struct.FRAME_RATE = struct.SAMPLE_RATE_HZ;
+end
 end
