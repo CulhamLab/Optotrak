@@ -122,6 +122,11 @@ if iscell(FileName)
             else
                 DoError('Cannot locate opto info struct')
             end
+        else
+            %if using .opto but no IRED_NUMBER_PER_TRIAL value, look for p.opto.IRED_NUMBER_PER_TRIAL
+            if ~isfield(file{fid}.opto, 'IRED_NUMBER_PER_TRIAL') && isfield(file{fid}.p, 'OPTO') && isfield(file{fid}.p.OPTO, 'IRED_NUMBER_PER_TRIAL')
+                file{fid}.opto.IRED_NUMBER_PER_TRIAL = file{fid}.p.OPTO.IRED_NUMBER_PER_TRIAL;
+            end
         end
         
         %rename fields in old data
@@ -249,7 +254,7 @@ if iscell(FileName)
             
             %more checks on each recording
             if data.opto_data.IRED_NUMBER ~= IRED_NUMBER_PER_TRIAL
-                DoError(sprintf('The number of IREDs is not consistent in trial %d of %s', trial, fn))
+                DoError(sprintf('The number of IREDs is not consistent in trial %d of %s (expected %d, found %d)', trial, fn, IRED_NUMBER_PER_TRIAL, data.opto_data.IRED_NUMBER))
                 return;
             elseif data.opto_data.framerate ~= sample_rate
                 DoError(sprintf('The sample rate is not consistent in trial %d of %s', trial, fn))
