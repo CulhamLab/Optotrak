@@ -249,7 +249,7 @@ if iscell(FileName)
             
             %more checks on each recording
             if data.opto_data.IRED_NUMBER ~= IRED_NUMBER_PER_TRIAL
-                DoError(sprintf('The number of IREDs is not consistent in trial %d of %s', trial, fn))
+                DoError(sprintf('The number of IREDs is not consistent in trial %d of %s (expected %d, found %d)', trial, fn, IRED_NUMBER_PER_TRIAL, data.opto_data.IRED_NUMBER))
                 return;
             elseif data.opto_data.framerate ~= sample_rate
                 DoError(sprintf('The sample rate is not consistent in trial %d of %s', trial, fn))
