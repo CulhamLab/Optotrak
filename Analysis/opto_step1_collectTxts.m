@@ -122,6 +122,11 @@ if iscell(FileName)
             else
                 DoError('Cannot locate opto info struct')
             end
+        else
+            %if using .opto but no IRED_NUMBER_PER_TRIAL value, look for p.opto.IRED_NUMBER_PER_TRIAL
+            if ~isfield(file{fid}.opto, 'IRED_NUMBER_PER_TRIAL') && isfield(file{fid}.p, 'OPTO') && isfield(file{fid}.p.OPTO, 'IRED_NUMBER_PER_TRIAL')
+                file{fid}.opto.IRED_NUMBER_PER_TRIAL = file{fid}.p.OPTO.IRED_NUMBER_PER_TRIAL;
+            end
         end
         
         %rename fields in old data
